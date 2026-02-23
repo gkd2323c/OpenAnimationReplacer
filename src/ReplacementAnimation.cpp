@@ -359,11 +359,13 @@ bool ReplacementAnimation::EvaluateSynchronizedConditions(RE::TESObjectREFR* a_s
 		trace->SetEvaluatingSynchronizedConditions(false);
 	}
 	const bool bPassingSourceConditions = _conditionSet->IsEmpty() || _conditionSet->EvaluateAll(a_sourceRefr, a_clipGenerator, _parentSubMod, bTrace);
-
 	if (trace) {
 		trace->SetEvaluatingSynchronizedConditions(true);
 	}
 	const bool bPassingTargetConditions = !_synchronizedConditionSet || _synchronizedConditionSet->IsEmpty() || _synchronizedConditionSet->EvaluateAll(a_targetRefr, a_clipGenerator, _parentSubMod, bTrace);
+	if (trace) {
+		trace->SetEvaluatingSynchronizedConditions(false);
+	}
 
 	if (trace) {
 		if (_conditionSet->IsEmpty() && (!_synchronizedConditionSet || _synchronizedConditionSet->IsEmpty())) {

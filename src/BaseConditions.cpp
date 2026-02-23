@@ -145,9 +145,9 @@ namespace Conditions
 					result = bSuccess ? ReplacementTrace::Step::StepResult::kSuccess : ReplacementTrace::Step::StepResult::kFail;
 				}
 				if (bHasMultiComponent) {
-					trace->EndTracingMultiCondition(condition.get(), result);
+					trace->EndTracingMultiCondition(condition.get(), result, a_parentSubMod);
 				} else {
-					trace->TraceCondition(condition.get(), result);
+					trace->TraceCondition(condition.get(), result, a_parentSubMod);
 				}
 
 				if (!bSuccess) {
@@ -186,9 +186,9 @@ namespace Conditions
 				if (trace) {
 					ReplacementTrace::Step::StepResult result = bSuccess ? ReplacementTrace::Step::StepResult::kSuccess : ReplacementTrace::Step::StepResult::kFail;
 					if (bHasMultiComponent) {
-						trace->EndTracingMultiCondition(condition.get(), result);
+						trace->EndTracingMultiCondition(condition.get(), result, a_parentSubMod);
 					} else {
-						trace->TraceCondition(condition.get(), result);
+						trace->TraceCondition(condition.get(), result, a_parentSubMod);
 					}
 				}
 				if (bSuccess) {
@@ -196,7 +196,7 @@ namespace Conditions
 					break;
 				}
 			} else if (trace) {
-				trace->TraceCondition(condition.get(), ReplacementTrace::Step::StepResult::kDisabled);
+				trace->TraceCondition(condition.get(), ReplacementTrace::Step::StepResult::kDisabled, a_parentSubMod);
 			}
 		}
 

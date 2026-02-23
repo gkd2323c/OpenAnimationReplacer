@@ -50,15 +50,16 @@ struct ReplacementTrace
 	void StartNewTrace();
 
 	void TraceAnimation(const class ReplacementAnimation* a_replacement);
+	void TraceAnimation(const class SubMod* a_subMod);
 
 	void SetTraceAnimationResult(Step::StepResult a_result)
 	{
 		steps.back().result = a_result;
 	}
 
-	void TraceCondition(Conditions::ICondition* a_condition, Step::StepResult a_result);
+	void TraceCondition(Conditions::ICondition* a_condition, Step::StepResult a_result, const class SubMod* a_subMod);
 	void StartTracingMultiCondition();
-	void EndTracingMultiCondition(Conditions::ICondition* a_condition, Step::StepResult a_result);
+	void EndTracingMultiCondition(Conditions::ICondition* a_condition, Step::StepResult a_result, const class SubMod* a_subMod);
 
 	void SetEvaluatingSynchronizedConditions(bool a_bSynchronized) { bSynchronized = a_bSynchronized; }
 

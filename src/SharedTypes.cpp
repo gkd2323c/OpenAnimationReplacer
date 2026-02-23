@@ -16,11 +16,21 @@ void ReplacementTrace::TraceAnimation(const ReplacementAnimation* a_replacement)
 	steps.emplace_back(parentMod->GetName().data(), parentSubMod->GetName().data());
 }
 
-void ReplacementTrace::TraceCondition(Conditions::ICondition* a_condition, Step::StepResult a_result)
+void ReplacementTrace::TraceAnimation(const SubMod* a_subMod)
+{
+	auto parentMod = a_subMod->GetParentMod();
+
+	steps.emplace_back(parentMod->GetName().data(), a_subMod->GetName().data());
+}
+
+void ReplacementTrace::TraceCondition(Conditions::ICondition* a_condition, Step::StepResult a_result, const SubMod* a_subMod)
 {
 	std::string conditionName = std::format("{}{}({})", a_condition->IsNegated() ? "NOT "sv : ""sv, a_condition->GetName().c_str(), a_condition->GetArgument().c_str());
 
 	if (childStack.empty()) {
+		if (steps.empty()) {
+			TraceAnimation(a_subMod);
+		}
 		std::vector<Step::ConditionEntry>& conditions = bSynchronized ? steps.back().synchronizedConditions : steps.back().conditions;
 		conditions.emplace_back(conditionName, a_result);
 	} else {
@@ -33,7 +43,7 @@ void ReplacementTrace::StartTracingMultiCondition()
 	childStack.emplace();
 }
 
-void ReplacementTrace::EndTracingMultiCondition(Conditions::ICondition* a_condition, Step::StepResult a_result)
+void ReplacementTrace::EndTracingMultiCondition(Conditions::ICondition* a_condition, Step::StepResult a_result, const SubMod* a_subMod)
 {
 	std::string conditionName = std::format("{}{}({})", a_condition->IsNegated() ? "NOT "sv : ""sv, a_condition->GetName().c_str(), a_condition->GetArgument().c_str());
 
@@ -41,6 +51,9 @@ void ReplacementTrace::EndTracingMultiCondition(Conditions::ICondition* a_condit
 	childStack.pop();
 
 	if (childStack.empty()) {
+		if (steps.empty()) {
+			TraceAnimation(a_subMod);
+		}
 		std::vector<Step::ConditionEntry>& conditions = bSynchronized ? steps.back().synchronizedConditions : steps.back().conditions;
 		conditions.emplace_back(conditionName, a_result, childSteps);
 	} else {
