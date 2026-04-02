@@ -1,4 +1,4 @@
-#include "UIAnimationEventLog.h"
+﻿#include "UIAnimationEventLog.h"
 
 #include "Settings.h"
 #include "UICommon.h"

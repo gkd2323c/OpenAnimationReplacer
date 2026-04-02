@@ -1,4 +1,4 @@
-#include "UIAnimationLog.h"
+﻿#include "UIAnimationLog.h"
 #include "Settings.h"
 #include "UICommon.h"
 #include "UIManager.h"

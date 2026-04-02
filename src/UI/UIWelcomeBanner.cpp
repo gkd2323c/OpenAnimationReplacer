@@ -1,4 +1,4 @@
-#include "UIWelcomeBanner.h"
+﻿#include "UIWelcomeBanner.h"
 
 #include "Settings.h"
 #include "UICommon.h"

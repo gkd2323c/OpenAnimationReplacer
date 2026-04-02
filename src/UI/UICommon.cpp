@@ -1,4 +1,4 @@
-#include "UICommon.h"
+﻿#include "UICommon.h"
 #include "UIManager.h"
 #include <Windows.h>
 #include <dinput.h>
@@ -494,7 +494,7 @@ namespace UI::UICommon
 			"OEM ~", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
 			"", "", "", "", "", "", "", "", "", "", "", "OEM [", "OEM \\", "OEM ]", "OEM '", "OEM 8",
 			"", "", "OEM <", "", "", "", "", "", "", "", "", "", "", "", "", "",
-			"", "", "", "", "", "", "", "", "Attn", "CrSel", "ExSel", "Erase EOF", "Play", "Zoom", "", "PA1", "OEM Clear", ""
+			"", "", "", "", "", "", "", "", "Attn", "CrSel", "ExSel", "Erase EOF", "Play", "Zoom", "", "PA1"
 		};
 
 		const LANGID language = LOWORD(GetKeyboardLayout(0));
