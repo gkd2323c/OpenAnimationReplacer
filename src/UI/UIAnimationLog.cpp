@@ -33,11 +33,11 @@ namespace UI
 						ImGui::EndTable();
 					}
 				} else {
-					UICommon::TextUnformattedDisabled("No animation log entries");
+					UICommon::TextUnformattedDisabled("没有动画日志条目");
 				}
 			} else {
 				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-				ImGui::TextWrapped("No reference selected. Type in a FormID in the main window, or select a reference in the console.");
+				ImGui::TextWrapped("未选择参考对象。在主窗口中输入FormID，或在控制台中选择一个参考对象。");
 				ImGui::PopStyleColor();
 			}
 			if (IsInteractable()) {
@@ -73,9 +73,9 @@ namespace UI
 		const float filterWidth = (ImGui::GetContentRegionAvail().x - style.FramePadding.x * 2 - helpMarkerWidth * 2);
 
 		ImGui::SetNextItemWidth(filterWidth);
-		ImGui::InputTextWithHint("##filter", "Filter... (Affects new entries)", &animationLog.filter);
+		ImGui::InputTextWithHint("##filter", "筛选... (影响新条目)", &animationLog.filter);
 		ImGui::SameLine();
-		UICommon::HelpMarker("Type a part of the log event type / animation name / path / mod name / submod name to filter the log results. You can use regex.");
+		UICommon::HelpMarker("输入日志事件类型/动画名称/路径/Mod名称/子Mod名称的一部分来筛选日志结果。您可以使用正则表达式。");
 	}
 
 	void UIAnimationLog::DrawLogEntry(AnimationLogEntry& a_logEntry)
@@ -96,59 +96,59 @@ namespace UI
 
 		switch (a_logEntry.event) {
 		case Event::kActivate:
-			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "Activate");
+			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "激活");
 			break;
 		case Event::kActivateSynchronized:
-			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "Activate");
+			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "激活");
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_SYNCHRONIZED_COLOR, "Paired");
+			UICommon::TextUnformattedColored(UICommon::LOG_SYNCHRONIZED_COLOR, "配对");
 			break;
 		case Event::kEcho:
-			UICommon::TextUnformattedColored(UICommon::LOG_ECHO_COLOR, "Echo");
+			UICommon::TextUnformattedColored(UICommon::LOG_ECHO_COLOR, "回响");
 			break;
 		case Event::kLoop:
-			UICommon::TextUnformattedColored(UICommon::LOG_LOOP_COLOR, "Loop");
+			UICommon::TextUnformattedColored(UICommon::LOG_LOOP_COLOR, "循环");
 			break;
 		case Event::kActivateReplace:
-			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "Activate");
+			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "激活");
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[Replaced]");
+			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[已替换]");
 			break;
 		case Event::kActivateReplaceSynchronized:
-			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "Activate");
+			UICommon::TextUnformattedColored(UICommon::LOG_ACTIVATED_COLOR, "激活");
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_SYNCHRONIZED_COLOR, "Paired");
+			UICommon::TextUnformattedColored(UICommon::LOG_SYNCHRONIZED_COLOR, "配对");
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[Replaced]");
+			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[已替换]");
 			break;
 		case Event::kEchoReplace:
-			UICommon::TextUnformattedColored(UICommon::LOG_ECHO_COLOR, "Echo");
+			UICommon::TextUnformattedColored(UICommon::LOG_ECHO_COLOR, "回响");
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[Replaced]");
+			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[已替换]");
 			break;
 		case Event::kLoopReplace:
-			UICommon::TextUnformattedColored(UICommon::LOG_LOOP_COLOR, "Loop");
+			UICommon::TextUnformattedColored(UICommon::LOG_LOOP_COLOR, "循环");
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[Replaced]");
+			UICommon::TextUnformattedColored(UICommon::LOG_REPLACED_COLOR, "[已替换]");
 			break;
 		case Event::kInterrupt:
-			UICommon::TextUnformattedColored(UICommon::LOG_INTERRUPTED_COLOR, "Interrupted");
+			UICommon::TextUnformattedColored(UICommon::LOG_INTERRUPTED_COLOR, "已中断");
 			break;
 		case Event::kPairedMismatch:
-			UICommon::TextUnformattedColored(UICommon::LOG_INTERRUPTED_COLOR, "Interrupted");
+			UICommon::TextUnformattedColored(UICommon::LOG_INTERRUPTED_COLOR, "已中断");
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_SYNCHRONIZED_COLOR, "(Paired Mismatch)");
+			UICommon::TextUnformattedColored(UICommon::LOG_SYNCHRONIZED_COLOR, "(配对不匹配)");
 			break;
 		}
 
 		if (a_logEntry.bVariant) {
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_VARIANT_COLOR, "[Variant]");
+			UICommon::TextUnformattedColored(UICommon::LOG_VARIANT_COLOR, "[变体]");
 		}
 
 		if (a_logEntry.event < Event::kInterrupt && a_logEntry.bInterruptible) {
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::LOG_INTERRUPTED_COLOR, "(Interruptible)");
+			UICommon::TextUnformattedColored(UICommon::LOG_INTERRUPTED_COLOR, "(可中断)");
 		}
 
 		if (a_logEntry.count > 1) {
@@ -157,14 +157,14 @@ namespace UI
 			ImGui::TextUnformatted(text.data());
 		}
 
-		const std::string projectText = std::format("Project: {} ", a_logEntry.projectName);
+		const std::string projectText = std::format("项目: {} ", a_logEntry.projectName);
 		ImGui::SameLine(ImGui::GetContentRegionMax().x - ImGui::CalcTextSize(projectText.data()).x);
 		UICommon::TextUnformattedDisabled(projectText.data());
 
-		const std::string clipText = std::format("Clip: {} ", a_logEntry.clipName);
+		const std::string clipText = std::format("片段: {} ", a_logEntry.clipName);
 		const float clipTextWidth = ImGui::CalcTextSize(clipText.data()).x;
 
-		UICommon::TextUnformattedDisabled("Name:");
+		UICommon::TextUnformattedDisabled("名称:");
 		ImGui::SameLine();
 		UICommon::TextUnformattedEllipsis(a_logEntry.animationName.data(), nullptr, ImGui::GetContentRegionAvail().x - clipTextWidth);
 
@@ -172,13 +172,13 @@ namespace UI
 		UICommon::TextUnformattedDisabled(clipText.data());
 
 		if (a_logEntry.bOriginal) {
-			UICommon::TextUnformattedDisabled("Original animation");
+			UICommon::TextUnformattedDisabled("原始动画");
 		} else {
 			UICommon::TextUnformattedDisabled("Mod:");
 			ImGui::SameLine();
 			ImGui::TextUnformatted(a_logEntry.modName.data());
 			ImGui::SameLine();
-			UICommon::TextUnformattedDisabled("Submod:");
+			UICommon::TextUnformattedDisabled("子Mod:");
 			ImGui::SameLine();
 			ImGui::TextUnformatted(a_logEntry.subModName.data());
 			//ImGui::Text(std::format("{} / {}", a_logEntry.modName, a_logEntry.subModName).data());
@@ -188,7 +188,7 @@ namespace UI
 		auto& animationLog = AnimationLog::GetSingleton();
 		if (!animationLog.tracedEntry.bIsValid) {
 			const auto& style = ImGui::GetStyle();
-			std::string traceButtonText = "Show trace";
+			std::string traceButtonText = "显示追踪";
 			const float traceButtonWidth = ImGui::CalcTextSize(traceButtonText.data()).x + style.FramePadding.x * 2 + style.ItemSpacing.x;
 			traceButtonText += "##" + std::to_string(reinterpret_cast<std::uintptr_t>(&a_logEntry));
 			ImGui::SameLine(ImGui::GetContentRegionMax().x - traceButtonWidth);
@@ -202,7 +202,7 @@ namespace UI
 			variantTextWidth = ImGui::CalcTextSize(a_logEntry.variantFilename.data()).x + ImGui::GetStyle().ItemSpacing.x;
 		}
 
-		UICommon::TextUnformattedDisabled("Path:");
+		UICommon::TextUnformattedDisabled("路径:");
 		ImGui::SameLine();
 		UICommon::TextUnformattedEllipsis(a_logEntry.animPath.data(), nullptr, ImGui::GetContentRegionAvail().x - variantTextWidth);
 
@@ -266,28 +266,28 @@ namespace UI
 				ImGui::EndDisabled();
 
 				if (bNodeOpen) {
-					bool bHasSynchronizedConditions = !step.synchronizedConditions.empty();
+bool bHasSynchronizedConditions = !step.synchronizedConditions.empty();
 					if (bHasSynchronizedConditions) {
-						ImGui::TextUnformatted("Conditions:");
+						ImGui::TextUnformatted("条件:");
 					}
 					for (auto& condition : step.conditions) {
 						DrawTraceCondition(condition);
 					}
 					if (bHasSynchronizedConditions) {
-						ImGui::TextUnformatted("Synchronized conditions:");
+						ImGui::TextUnformatted("同步条件:");
 						for (auto& condition : step.synchronizedConditions) {
 							DrawTraceCondition(condition);
 						}
 					}
-
-					ImGui::TreePop();
 				}
+
+				ImGui::TreePop();
 			}
 		}
 
 		ImGui::EndChild();
 
-		if (ImGui::Button("Close trace")) {
+		if (ImGui::Button("关闭追踪")) {
 			auto& animationLog = AnimationLog::GetSingleton();
 			animationLog.tracedEntry = AnimationLogEntry();
 		}
@@ -297,15 +297,15 @@ namespace UI
 	{
 		switch (a_stepResult) {
 		case ReplacementTrace::Step::StepResult::kSuccess:
-			return "Success"sv;
+			return "成功"sv;
 		case ReplacementTrace::Step::StepResult::kFail:
-			return "Fail"sv;
+			return "失败"sv;
 		case ReplacementTrace::Step::StepResult::kDisabled:
-			return "Disabled"sv;
+			return "已禁用"sv;
 		case ReplacementTrace::Step::StepResult::kNoConditions:
-			return "No conditions"sv;
+			return "无条件"sv;
 		default:
-			return "Unknown"sv;
+			return "未知"sv;
 		}
 	}
 

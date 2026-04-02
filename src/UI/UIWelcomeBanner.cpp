@@ -34,10 +34,10 @@ namespace UI
 		}
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
 		if (ImGui::Begin("Open Animation Replacer##Welcome", nullptr, windowFlags)) {
-			const auto titleText = std::format("Open Animation Replacer {}.{}.{}", Plugin::VERSION.major(), Plugin::VERSION.minor(), Plugin::VERSION.patch());
-			constexpr auto textA = "Press"sv;
+			const auto titleText = std::format("Open Animation Replacer {}.{}.{} (中文版)", Plugin::VERSION.major(), Plugin::VERSION.minor(), Plugin::VERSION.patch());
+			constexpr auto textA = "按下"sv;
 			const auto keyNameText = UICommon::GetKeyName(Settings::uToggleUIKeyData);
-			constexpr auto textB = "to open the in-game UI."sv;
+			constexpr auto textB = "打开游戏内界面。"sv;
 			const auto windowWidth = ImGui::GetWindowSize().x;
 			const auto titleTextWidth = ImGui::CalcTextSize(titleText.data()).x;
 			ImGui::SetCursorPosX((windowWidth - titleTextWidth) * 0.5f);

@@ -246,7 +246,7 @@ namespace UI::UICommon
 				OpenPopup(popupName.data());
 			}
 		}
-		AddTooltip("Hold CTRL to skip the confirmation popup");
+		AddTooltip("按住CTRL跳过确认弹窗");
 
 		if (BeginPopupModal(popupName.data(), nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 			Text(a_confirmation.data());
@@ -255,13 +255,13 @@ namespace UI::UICommon
 			constexpr float buttonWidth = 120.f;
 			SetCursorPosX((GetWindowSize().x - (buttonWidth * 2.f) - GetStyle().ItemSpacing.x) * 0.5f);
 
-			if (Button("OK", ImVec2(buttonWidth, 0))) {
+			if (Button("确定", ImVec2(buttonWidth, 0))) {
 				CloseCurrentPopup();
 				a_func();
 			}
 			SetItemDefaultFocus();
 			SameLine();
-			if (Button("Cancel", ImVec2(buttonWidth, 0))) {
+			if (Button("取消", ImVec2(buttonWidth, 0))) {
 				CloseCurrentPopup();
 			}
 			EndPopup();
@@ -479,22 +479,22 @@ namespace UI::UICommon
 			"", "", "", "", "", "", "Attn", "CrSel", "ExSel", "Erase EOF", "Play", "Zoom", "", "PA1", "OEM Clear", ""
 		};
 		static const char* keyboard_keys_international[256] = {
-			"", "Left Mouse", "Right Mouse", "Cancel", "Middle Mouse", "X1 Mouse", "X2 Mouse", "", "Backspace", "Tab", "", "", "Clear", "Enter", "", "",
-			"Shift", "Control", "Alt", "Pause", "Caps Lock", "", "", "", "", "", "", "Escape", "", "", "", "",
-			"Space", "Page Up", "Page Down", "End", "Home", "Left Arrow", "Up Arrow", "Right Arrow", "Down Arrow", "Select", "", "", "Print Screen", "Insert", "Delete", "Help",
+			"", "鼠标左键", "鼠标右键", "取消", "鼠标中键", "鼠标X1", "鼠标X2", "", "退格", "Tab", "", "", "Clear", "回车", "", "",
+			"Shift", "Ctrl", "Alt", "Pause", "大小写锁定", "", "", "", "", "", "", "Escape", "", "", "", "",
+			"空格", "Page Up", "Page Down", "End", "Home", "左方向键", "上方向键", "右方向键", "下方向键", "Select", "", "", "Print Screen", "Insert", "Delete", "Help",
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "", "", "", "", "", "",
 			"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Left Windows", "Right Windows", "Apps", "", "Sleep",
-			"Numpad 0", "Numpad 1", "Numpad 2", "Numpad 3", "Numpad 4", "Numpad 5", "Numpad 6", "Numpad 7", "Numpad 8", "Numpad 9", "Numpad *", "Numpad +", "", "Numpad -", "Numpad Decimal", "Numpad /",
+			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "左Win", "右Win", "Apps", "", "Sleep",
+			"小键盘0", "小键盘1", "小键盘2", "小键盘3", "小键盘4", "小键盘5", "小键盘6", "小键盘7", "小键盘8", "小键盘9", "小键盘*", "小键盘+", "", "小键盘-", "小键盘.", "小键盘/",
 			"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16",
 			"F17", "F18", "F19", "F20", "F21", "F22", "F23", "F24", "", "", "", "", "", "", "", "",
 			"Num Lock", "Scroll Lock", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-			"Left Shift", "Right Shift", "Left Control", "Right Control", "Left Menu", "Right Menu", "Browser Back", "Browser Forward", "Browser Refresh", "Browser Stop", "Browser Search", "Browser Favorites", "Browser Home", "Volume Mute", "Volume Down", "Volume Up",
-			"Next Track", "Previous Track", "Media Stop", "Media Play/Pause", "Mail", "Media Select", "Launch App 1", "Launch App 2", "", "", "OEM ;", "OEM +", "OEM ,", "OEM -", "OEM .", "OEM /",
+			"左Shift", "右Shift", "左Ctrl", "右Ctrl", "左Alt", "右Alt", "浏览器后退", "浏览器前进", "浏览器刷新", "浏览器停止", "浏览器搜索", "浏览器收藏", "浏览器主页", "静音", "音量减", "音量加",
+			"下一曲", "上一曲", "停止播放", "播放/暂停", "邮件", "媒体选择", "启动应用1", "启动应用2", "", "", "OEM ;", "OEM +", "OEM ,", "OEM -", "OEM .", "OEM /",
 			"OEM ~", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
 			"", "", "", "", "", "", "", "", "", "", "", "OEM [", "OEM \\", "OEM ]", "OEM '", "OEM 8",
 			"", "", "OEM <", "", "", "", "", "", "", "", "", "", "", "", "", "",
-			"", "", "", "", "", "", "Attn", "CrSel", "ExSel", "Erase EOF", "Play", "Zoom", "", "PA1", "OEM Clear", ""
+			"", "", "", "", "", "", "", "", "Attn", "CrSel", "ExSel", "Erase EOF", "Play", "Zoom", "", "PA1", "OEM Clear", ""
 		};
 
 		const LANGID language = LOWORD(GetKeyboardLayout(0));
@@ -517,7 +517,7 @@ namespace UI::UICommon
 		if (a_key[0] || a_key[1] || a_key[2] || a_key[3]) {
 			buf[GetKeyName(a_key).copy(buf, sizeof(buf) - 1)] = '\0';
 		}
-		ImGui::InputTextWithHint(a_label, "Click to set keyboard shortcut", buf, sizeof(buf), ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoUndoRedo | ImGuiInputTextFlags_NoHorizontalScroll);
+		ImGui::InputTextWithHint(a_label, "点击设置快捷键", buf, sizeof(buf), ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoUndoRedo | ImGuiInputTextFlags_NoHorizontalScroll);
 
 		if (ImGui::IsItemActive()) {
 			const auto lastKeyPressed = UIManager::GetSingleton().GetLastKeyPressed();
@@ -539,7 +539,7 @@ namespace UI::UICommon
 				}
 			}
 		} else {
-			AddTooltip("Click in the field and press any key to change the shortcut to that key.");
+			AddTooltip("点击输入框并按任意键更改快捷键。");
 		}
 
 		return ret;

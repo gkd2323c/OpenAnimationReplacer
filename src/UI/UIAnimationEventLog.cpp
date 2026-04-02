@@ -28,8 +28,8 @@ namespace UI
 			if (!animationEventLog.IsLogEmpty()) {
 				// draw log entries
 				if (ImGui::BeginTable("AnimationLogTable", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, ImVec2(0.f, Settings::fAnimationEventLogHeight))) {
-					ImGui::TableSetupColumn("Source", ImGuiTableColumnFlags_WidthStretch, 0.2f);
-					ImGui::TableSetupColumn("Event", ImGuiTableColumnFlags_WidthStretch, 0.8f);
+					ImGui::TableSetupColumn("来源", ImGuiTableColumnFlags_WidthStretch, 0.2f);
+					ImGui::TableSetupColumn("事件", ImGuiTableColumnFlags_WidthStretch, 0.8f);
 					const auto timeWidth = ImGui::CalcTextSize("+0.000").x;
 					ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed, timeWidth);
 					ImGui::TableSetupScrollFreeze(0, 1);
@@ -66,7 +66,7 @@ namespace UI
 				}
 
 			} else {
-				UICommon::TextUnformattedDisabled("No animation event log entries");
+				UICommon::TextUnformattedDisabled("没有动画事件日志条目");
 			}
 
 			if (IsInteractable()) {
@@ -91,26 +91,26 @@ namespace UI
 
 		// filtering
 		const auto& style = ImGui::GetStyle();
-		const float orderButtonWidth = (ImGui::CalcTextSize("Order:").x + ImGui::GetFontSize() + style.FramePadding.x * 2);
-		const std::string clearButtonName = "Clear Log";
+		const float orderButtonWidth = (ImGui::CalcTextSize("顺序:").x + ImGui::GetFontSize() + style.FramePadding.x * 2);
+		const std::string clearButtonName = "清除日志";
 		const float clearButtonWidth = (ImGui::CalcTextSize(clearButtonName.data()).x + style.FramePadding.x * 2);
 		const float helpMarkerWidth = ImGui::CalcTextSize("(?)").x + style.ItemSpacing.x * 2;
 		const float filterWidth = (ImGui::GetContentRegionAvail().x - style.FramePadding.x * 2 - helpMarkerWidth * 2 - orderButtonWidth - clearButtonWidth);
 
 		ImGui::SetNextItemWidth(filterWidth);
-		if (ImGui::InputTextWithHint("##filter", "Filter...", &animationEventLog.filter)) {
+		if (ImGui::InputTextWithHint("##filter", "筛选...", &animationEventLog.filter)) {
 			animationEventLog.RefreshFilter();
 		}
 		ImGui::SameLine();
-		UICommon::HelpMarker("Type a part of the event name / source name / payload to filter the log results. You can use regex.");
+		UICommon::HelpMarker("输入事件名称/来源名称/载荷的一部分来筛选日志结果。您可以使用正则表达式。");
 
 		ImGui::SameLine(ImGui::GetContentRegionMax().x - orderButtonWidth - clearButtonWidth - style.ItemSpacing.x);
-		if (UICommon::ArrowButtonText("Order:", Settings::bAnimationLogOrderDescending ? ImGuiDir_Down : ImGuiDir_Up, true)) {
+		if (UICommon::ArrowButtonText("顺序:", Settings::bAnimationLogOrderDescending ? ImGuiDir_Down : ImGuiDir_Up, true)) {
 			Settings::bAnimationLogOrderDescending = !Settings::bAnimationLogOrderDescending;
 			Settings::WriteSettings();
 			animationEventLog.ForceHasNewEvent();
 		}
-		UICommon::AddTooltip("Click to change the log list order.");
+		UICommon::AddTooltip("点击更改日志列表顺序。");
 
 		ImGui::SameLine(ImGui::GetContentRegionMax().x - clearButtonWidth);
 		if (ImGui::Button(clearButtonName.data())) {
@@ -123,7 +123,7 @@ namespace UI
 		auto& animationEventLog = AnimationEventLog::GetSingleton();
 
 		// draw list of event sources
-		ImGui::TextUnformatted("Event Sources");
+		ImGui::TextUnformatted("事件来源");
 
 		if (animationEventLog.HasEventSources()) {
 			std::vector<RE::ObjectRefHandle> eventSourcesToRemove;
@@ -138,7 +138,7 @@ namespace UI
 			}
 		} else {
 			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-			ImGui::TextWrapped("No animation event sources added. Type in a FormID or select a reference in the console, then click Add Event Source.");
+			ImGui::TextWrapped("未添加动画事件来源。在控制台中输入FormID或选择参考对象，然后点击添加事件来源。");
 			ImGui::PopStyleColor();
 		}
 
@@ -153,24 +153,24 @@ namespace UI
 			selectedRefr = consoleRefr.get();
 			ImGui::BeginDisabled();
 			std::string formID = std::format("{:08X}", consoleRefr->GetFormID());
-			ImGui::InputText("Event Source", formID.data(), ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
+			ImGui::InputText("事件来源", formID.data(), ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
 			ImGui::EndDisabled();
 		} else {
-			ImGui::InputTextWithHint("Event Source", "FormID...", formIDBuf, IM_ARRAYSIZE(formIDBuf), ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase, &EventSourceInputTextCallback);
+			ImGui::InputTextWithHint("事件来源", "FormID...", formIDBuf, IM_ARRAYSIZE(formIDBuf), ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase, &EventSourceInputTextCallback);
 			selectedRefr = _selectedRefr;
 		}
 		ImGui::SameLine();
 		if (!selectedRefr) {
 			ImGui::BeginDisabled();
-			ImGui::Button("Add Event Source");
+			ImGui::Button("添加事件来源");
 			ImGui::EndDisabled();
 		} else {
 			if (animationEventLog.HasEventSource(selectedRefr)) {
-				if (ImGui::Button("Remove Event Source")) {
+				if (ImGui::Button("移除事件来源")) {
 					animationEventLog.RemoveEventSource(selectedRefr);
 				}
 			} else {
-				if (ImGui::Button("Add Event Source")) {
+				if (ImGui::Button("添加事件来源")) {
 					animationEventLog.AddEventSource(selectedRefr);
 				}
 			}
@@ -192,16 +192,16 @@ namespace UI
 			UICommon::TextUnformattedDisabled(name.data());
 
 			ImGui::SameLine();
-			const std::string checkboxLabel = std::format("Log Notify Graph##{}", a_handle.native_handle());
+			const std::string checkboxLabel = std::format("记录通知图##{}", a_handle.native_handle());
 			auto& animationEventLog = AnimationEventLog::GetSingleton();
 			bool tempBool = animationEventLog.GetLogNotifies(a_handle);
 			if (ImGui::Checkbox(checkboxLabel.data(), &tempBool)) {
 				animationEventLog.SetLogNotifies(a_handle, tempBool);
 			}
-			UICommon::AddTooltip("Also log events sent from code or Papyrus by NotifyAnimationGraph / SendAnimationEvent etc.");
+			UICommon::AddTooltip("同时记录通过代码或Papyrus由NotifyAnimationGraph/SendAnimationEvent等发送的事件。");
 
 			ImGui::SameLine();
-			const std::string buttonLabel = std::format("Remove##{}", a_handle.native_handle());
+			const std::string buttonLabel = std::format("移除##{}", a_handle.native_handle());
 			if (ImGui::Button(buttonLabel.data())) {
 				return false;
 			}
@@ -235,9 +235,9 @@ namespace UI
 
 		if (a_logEntry->bFromNotify) {
 			if (a_logEntry->bTriggeredTransition) {
-				UICommon::TextUnformattedColored(UICommon::EVENT_LOG_TRIGGERED_TRANSITION_COLOR, "[Notify]");
+				UICommon::TextUnformattedColored(UICommon::EVENT_LOG_TRIGGERED_TRANSITION_COLOR, "[通知]");
 			} else {
-				UICommon::TextUnformattedDisabled("[Notify]");
+				UICommon::TextUnformattedDisabled("[通知]");
 			}
 
 			ImGui::SameLine();

@@ -29,7 +29,7 @@ namespace UI
 
 		SetWindowDimensions(0.f, 0.f, 850.f, -1, WindowAlignment::kCenterLeft);
 
-		const auto title = std::format("Open Animation Replacer {}.{}.{}", Plugin::VERSION.major(), Plugin::VERSION.minor(), Plugin::VERSION.patch());
+		const auto title = std::format("Open Animation Replacer {}.{}.{} (中文版)", Plugin::VERSION.major(), Plugin::VERSION.minor(), Plugin::VERSION.patch());
 		if (ImGui::Begin(title.data(), &UIManager::GetSingleton().bShowMain, ImGuiWindowFlags_NoCollapse)) {
 			if (ImGui::BeginTable("EvaluateForReference", 2, ImGuiTableFlags_None)) {
 				ImGui::TableNextRow();
@@ -41,14 +41,14 @@ namespace UI
 				if (const auto consoleRefr = Utils::GetConsoleRefr()) {
 					ImGui::BeginDisabled();
 					std::string formID = std::format("{:08X}", consoleRefr->GetFormID());
-					ImGui::InputText("Evaluate for reference", formID.data(), ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
+					ImGui::InputText("评估参考对象", formID.data(), ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
 					ImGui::EndDisabled();
 				} else {
-					ImGui::InputTextWithHint("Evaluate for reference", "FormID...", formIDBuf, IM_ARRAYSIZE(formIDBuf), ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase, &ReferenceInputTextCallback);
+					ImGui::InputTextWithHint("评估参考对象", "FormID...", formIDBuf, IM_ARRAYSIZE(formIDBuf), ImGuiInputTextFlags_CallbackEdit | ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase, &ReferenceInputTextCallback);
 				}
 
 				ImGui::SameLine();
-				UICommon::HelpMarker("Select a reference in the game's console, or type the FormID of a reference to color animations and conditions based on their current result for that reference. No need to type the leading zeros. (The player's FormID is 14).");
+				UICommon::HelpMarker("在游戏控制台中选择一个参考对象，或输入参考对象的FormID，根据该对象的当前结果对动画和条件进行着色。无需输入前导零。(玩家的FormID是14)。");
 
 				if (const auto refr = UIManager::GetSingleton().GetRefrToEvaluate()) {
 					ImGui::TableSetColumnIndex(1);
@@ -65,11 +65,11 @@ namespace UI
 			const float bottomBarHeight = ImGui::GetTextLineHeight() + style.FramePadding.y * 4 + style.ItemSpacing.y * 4;
 			if (ImGui::BeginChild("Tabs", ImVec2(0.f, -bottomBarHeight), true)) {
 				if (ImGui::BeginTabBar("TabBar")) {
-					if (ImGui::BeginTabItem("Replacer Mods")) {
+					if (ImGui::BeginTabItem("替换Mod")) {
 						DrawReplacerMods();
 						ImGui::EndTabItem();
 					}
-					if (ImGui::BeginTabItem("Replacement Animations")) {
+					if (ImGui::BeginTabItem("替换动画")) {
 						DrawReplacementAnimations();
 						ImGui::EndTabItem();
 					}
@@ -79,13 +79,13 @@ namespace UI
 			}
 			ImGui::EndChild();
 
-			const std::string animationLogButtonName = "Animation Log";
+			const std::string animationLogButtonName = "动画日志";
 			const float animationLogButtonWidth = (ImGui::CalcTextSize(animationLogButtonName.data()).x + style.FramePadding.x * 2 + style.ItemSpacing.x);
 
-			const std::string animationEventLogButtonName = "Event Log";
+			const std::string animationEventLogButtonName = "事件日志";
 			const float animationEventLogButtonWidth = (ImGui::CalcTextSize(animationEventLogButtonName.data()).x + style.FramePadding.x * 2 + style.ItemSpacing.x);
 
-			const std::string settingsButtonName = _bShowSettings ? "Settings <" : "Settings >";
+			const std::string settingsButtonName = _bShowSettings ? "设置 <" : "设置 >";
 			const float settingsButtonWidth = (ImGui::CalcTextSize(settingsButtonName.data()).x + style.FramePadding.x * 2 + style.ItemSpacing.x);
 
 			// Bottom bar
@@ -115,7 +115,7 @@ namespace UI
 
 					if (ImGui::Button(problemText.data(), ImGui::GetContentRegionAvail())) {
 						if (problems.CheckForProblems()) {
-							ImGui::OpenPopup("Problems");
+							ImGui::OpenPopup("问题");
 						}
 					}
 
@@ -147,14 +147,14 @@ namespace UI
 					height = std::clamp(height, 600.f, ImGui::GetIO().DisplaySize.y);
 
 					ImGui::SetNextWindowSize(ImVec2(800.f, height));
-					if (ImGui::BeginPopupModal("Problems", nullptr, ImGuiWindowFlags_NoResize)) {
+					if (ImGui::BeginPopupModal("问题", nullptr, ImGuiWindowFlags_NoResize)) {
 						auto childSize = ImGui::GetContentRegionAvail();
 						childSize.y -= buttonHeight;
 						if (ImGui::BeginChild("ProblemsContent", childSize)) {
 							bool bShouldDrawSeparator = false;
 							if (problems.IsOutdated()) {
 								ImGui::PushStyleColor(ImGuiCol_Text, UICommon::ERROR_TEXT_COLOR);
-								ImGui::TextWrapped("ERROR: At least one replacer mod has conditions that require a newer version of Open Animation Replacer.\nThe mod will not function correctly. Please update Open Animation Replacer!");
+								ImGui::TextWrapped("错误：至少有一个替换Mod的条件需要更新版本的Open Animation Replacer。\n该Mod将无法正常工作。请更新Open Animation Replacer！");
 								ImGui::PopStyleColor();
 
 								bShouldDrawSeparator = true;
@@ -169,7 +169,7 @@ namespace UI
 									ImGui::Spacing();
 								}
 								ImGui::PushStyleColor(ImGuiCol_Text, UICommon::ERROR_TEXT_COLOR);
-								ImGui::TextWrapped("ERROR: At least one replacer mod has conditions that aren't included in Open Animation Replacer itself, but are added by an Open Animation Replacer API plugin that is either not installed or outdated.\nThe mod will not function correctly. Please download or update the required plugin!");
+								ImGui::TextWrapped("错误：至少有一个替换Mod的条件不在Open Animation Replacer本身中，而是由一个未安装或过时的Open Animation Replacer API插件添加的。\n该Mod将无法正常工作。请下载或更新所需的插件！");
 								ImGui::PopStyleColor();
 								ImGui::Spacing();
 								DrawMissingPlugins();
@@ -186,7 +186,7 @@ namespace UI
 									ImGui::Spacing();
 								}
 								ImGui::PushStyleColor(ImGuiCol_Text, UICommon::ERROR_TEXT_COLOR);
-								ImGui::TextWrapped("ERROR: At least one replacer mod has conditions that aren't included in Open Animation Replacer itself, but are added by an Open Animation Replacer API plugin that seems to have failed to initialize properly.\nThe mod will not function correctly. Please make sure you have installed the required plugin and all its dependencies correctly!");
+								ImGui::TextWrapped("错误：至少有一个替换Mod的条件不在Open Animation Replacer本身中，而是由一个似乎初始化失败的Open Animation Replacer API插件添加的。\n该Mod将无法正常工作。请确保您已正确安装所需的插件及其所有依赖项！");
 								ImGui::PopStyleColor();
 								ImGui::Spacing();
 								DrawInvalidPlugins();
@@ -203,7 +203,7 @@ namespace UI
 									ImGui::Spacing();
 								}
 								ImGui::PushStyleColor(ImGuiCol_Text, UICommon::ERROR_TEXT_COLOR);
-								ImGui::TextWrapped("ERROR: At least one replacer mod has conditions that are invalid.\nThe mod will not function correctly. Please check the conditions of the replacer mod, and check whether there's an update available!");
+								ImGui::TextWrapped("错误：至少有一个替换Mod的条件无效。\n该Mod将无法正常工作。请检查替换Mod的条件，并检查是否有更新可用！");
 								ImGui::PopStyleColor();
 								ImGui::Spacing();
 								DrawReplacerModsWithInvalidConditions();
@@ -220,7 +220,7 @@ namespace UI
 									ImGui::Spacing();
 								}
 								ImGui::PushStyleColor(ImGuiCol_Text, UICommon::ERROR_TEXT_COLOR);
-								ImGui::TextWrapped("ERROR: At least one submod has conditions that are invalid.\nThe mod will not function correctly. Please check the conditions of the replacer mod, and check whether there's an update available!");
+								ImGui::TextWrapped("错误：至少有一个子Mod的条件无效。\n该Mod将无法正常工作。请检查替换Mod的条件，并检查是否有更新可用！");
 								ImGui::PopStyleColor();
 								ImGui::Spacing();
 								DrawSubModsWithInvalidConditions();
@@ -237,7 +237,7 @@ namespace UI
 									ImGui::Spacing();
 								}
 								ImGui::PushStyleColor(ImGuiCol_Text, UICommon::WARNING_TEXT_COLOR);
-								ImGui::TextWrapped("WARNING: The following mods have conflicting priorities.\nThis might cause unexpected behavior if they replace the same animations.");
+								ImGui::TextWrapped("警告：以下Mod具有冲突的优先级。\n如果它们替换相同的动画，可能会导致意外行为。");
 								ImGui::PopStyleColor();
 								ImGui::Spacing();
 								DrawConflictingSubMods();
@@ -250,7 +250,7 @@ namespace UI
 						constexpr float buttonWidth = 120.f;
 						ImGui::SetCursorPosX((ImGui::GetWindowSize().x - buttonWidth) * 0.5f);
 						ImGui::SetItemDefaultFocus();
-						if (ImGui::Button("OK", ImVec2(buttonWidth, 0))) {
+						if (ImGui::Button("确定", ImVec2(buttonWidth, 0))) {
 							ImGui::CloseCurrentPopup();
 						}
 						ImGui::EndPopup();
@@ -311,33 +311,33 @@ namespace UI
 	{
 		ImGui::SetNextWindowPos(a_pos, ImGuiCond_None, ImVec2(0.f, 1.f));
 
-		if (ImGui::Begin("Settings", &_bShowSettings, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings)) {
+		if (ImGui::Begin("设置", &_bShowSettings, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings)) {
 			// UI settings
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("UI Settings");
+			ImGui::TextUnformatted("界面设置");
 			ImGui::Spacing();
 
-			if (UICommon::InputKey("Menu key", Settings::uToggleUIKeyData)) {
+			if (UICommon::InputKey("菜单键", Settings::uToggleUIKeyData)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set the key to toggle the UI.");
+			UICommon::HelpMarker("设置切换界面的按键。");
 
 			ImGui::Spacing();
 
-			if (ImGui::Checkbox("Show welcome banner", &Settings::bShowWelcomeBanner)) {
+			if (ImGui::Checkbox("显示欢迎横幅", &Settings::bShowWelcomeBanner)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to show the welcome banner on startup.");
+			UICommon::HelpMarker("启用后将在启动时显示欢迎横幅。");
 
 			static float tempScale = Settings::fUIScale;
-			ImGui::SliderFloat("UI scale", &tempScale, 0.5f, 2.f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
+			ImGui::SliderFloat("界面缩放", &tempScale, 0.5f, 2.f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set the UI scale.");
+			UICommon::HelpMarker("设置界面缩放比例。");
 			ImGui::SameLine();
 			ImGui::BeginDisabled(tempScale == Settings::fUIScale);
-			if (ImGui::Button("Apply##UIScale")) {
+			if (ImGui::Button("应用##UIScale")) {
 				Settings::fUIScale = tempScale;
 				Settings::WriteSettings();
 			}
@@ -348,57 +348,57 @@ namespace UI
 
 			// General settings
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("General Settings");
+			ImGui::TextUnformatted("通用设置");
 			ImGui::Spacing();
 
 			constexpr uint16_t animLimitMin = 0x4000;
 			const uint16_t animLimitMax = Settings::GetMaxAnimLimit();
-			if (ImGui::SliderScalar("Animation limit", ImGuiDataType_U16, &Settings::uAnimationLimit, &animLimitMin, &animLimitMax, "%d", ImGuiSliderFlags_AlwaysClamp)) {
+			if (ImGui::SliderScalar("动画限制", ImGuiDataType_U16, &Settings::uAnimationLimit, &animLimitMin, &animLimitMax, "%d", ImGuiSliderFlags_AlwaysClamp)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set the animation limit per behavior project. The game will crash if you set this too high without increasing the heap size. The game is incapable of playing animations past the upper limit set here, there's no point trying to circumvent it through the .ini file.");
+			UICommon::HelpMarker("设置每个行为项目的动画限制。如果设置过高而不增加堆大小，游戏将会崩溃。游戏无法播放超过此处设置的动画上限，通过.ini文件绕过是没有意义的。");
 
 			constexpr uint32_t heapMin = 0x20000000;
 			constexpr uint32_t heapMax = 0x7FC00000;
-			if (ImGui::SliderScalar("Havok heap size", ImGuiDataType_U32, &Settings::uHavokHeapSize, &heapMin, &heapMax, "0x%X", ImGuiSliderFlags_AlwaysClamp)) {
+			if (ImGui::SliderScalar("Havok堆大小", ImGuiDataType_U32, &Settings::uHavokHeapSize, &heapMin, &heapMax, "0x%X", ImGuiSliderFlags_AlwaysClamp)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set the havok heap size. Takes effect after restarting the game. (Vanilla value is 0x20000000)");
+			UICommon::HelpMarker("设置Havok堆大小。重启游戏后生效。(原版值为0x20000000)");
 
-			if (ImGui::Checkbox("Async parsing", &Settings::bAsyncParsing)) {
+			if (ImGui::Checkbox("异步解析", &Settings::bAsyncParsing)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to asynchronously parse all the replacer mods on load. This dramatically speeds up the process. No real reason to disable this setting.");
+			UICommon::HelpMarker("启用后在加载时异步解析所有替换Mod。这大大加快了加载过程。没有真正理由禁用此设置。");
 
 			if (Settings::bDisablePreloading) {
 				ImGui::BeginDisabled();
 				bool bDummy = false;
-				ImGui::Checkbox("Load default behaviors in main menu", &bDummy);
+				ImGui::Checkbox("在主菜单加载默认行为", &bDummy);
 				ImGui::EndDisabled();
 			} else {
-				if (ImGui::Checkbox("Load default behaviors in main menu", &Settings::bLoadDefaultBehaviorsInMainMenu)) {
+				if (ImGui::Checkbox("在主菜单加载默认行为", &Settings::bLoadDefaultBehaviorsInMainMenu)) {
 					Settings::WriteSettings();
 				}
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to start loading default male/female behaviors in the main menu. Ignored with animation preloading disabled as there's no benefit in doing so in that case.");
+			UICommon::HelpMarker("启用后在主菜单开始加载默认的男女行为。禁用动画预加载时忽略，因为那样做没有好处。");
 
 			ImGui::Spacing();
 			ImGui::Separator();
 
 			// Duplicate filtering settings
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("Duplicate Filtering Settings");
+			ImGui::TextUnformatted("重复过滤设置");
 			ImGui::Spacing();
 
-			if (ImGui::Checkbox("Filter out duplicate animations", &Settings::bFilterOutDuplicateAnimations)) {
+			if (ImGui::Checkbox("过滤重复动画", &Settings::bFilterOutDuplicateAnimations)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to check for duplicates before adding an animation. Only one copy of an animation binding will be used in multiple replacer animations. This might massively cut down on the number of loaded animations as replacer mods tend to use multiple copies of the same animation with different condition.");
+			UICommon::HelpMarker("启用后在添加动画前检查重复项。在多个替换动画中只会使用一个动画绑定的副本。这可能会大幅减少加载的动画数量，因为替换Mod往往会使用同一动画的多个副本配合不同的条件。");
 
 			/*ImGui::BeginDisabled(!Settings::bFilterOutDuplicateAnimations);
             if (ImGui::Checkbox("Cache animation file hashes", &Settings::bCacheAnimationFileHashes)) {
@@ -418,150 +418,150 @@ namespace UI
 
 			// Animation queue progress bar settings
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("Animation Queue Progress Bar Settings");
+			ImGui::TextUnformatted("动画队列进度条设置");
 			ImGui::Spacing();
 
-			if (ImGui::Checkbox("Enable", &Settings::bEnableAnimationQueueProgressBar)) {
+			if (ImGui::Checkbox("启用", &Settings::bEnableAnimationQueueProgressBar)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to show a progress bar while animations are loading.");
+			UICommon::HelpMarker("启用后在动画加载时显示进度条。");
 
-			if (ImGui::SliderFloat("Linger time", &Settings::fAnimationQueueLingerTime, 0.f, 10.f, "%.1f s", ImGuiSliderFlags_AlwaysClamp)) {
+			if (ImGui::SliderFloat("停留时间", &Settings::fAnimationQueueLingerTime, 0.f, 10.f, "%.1f 秒", ImGuiSliderFlags_AlwaysClamp)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Duration the bar will remain on screen after all animations have been loaded.");
+			UICommon::HelpMarker("所有动画加载完成后进度条在屏幕上停留的时间。");
 
 			ImGui::Spacing();
 			ImGui::Separator();
 
 			// Animation log settings
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("Animation Log Settings");
+			ImGui::TextUnformatted("动画日志设置");
 			ImGui::Spacing();
 
-			if (ImGui::SliderFloat("Log width", &Settings::fAnimationLogWidth, 300.f, 1500.f, "%.0f", ImGuiSliderFlags_AlwaysClamp)) {
+			if (ImGui::SliderFloat("日志宽度", &Settings::fAnimationLogWidth, 300.f, 1500.f, "%.0f", ImGuiSliderFlags_AlwaysClamp)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Width of the animation log window.");
+			UICommon::HelpMarker("动画日志窗口的宽度。");
 
 			constexpr uint32_t entriesMin = 1;
 			constexpr uint32_t entriesMax = 20;
-			if (ImGui::SliderScalar("Max entries", ImGuiDataType_U32, &Settings::uAnimationLogMaxEntries, &entriesMin, &entriesMax, "%d", ImGuiSliderFlags_AlwaysClamp)) {
+			if (ImGui::SliderScalar("最大条目数", ImGuiDataType_U32, &Settings::uAnimationLogMaxEntries, &entriesMin, &entriesMax, "%d", ImGuiSliderFlags_AlwaysClamp)) {
 				AnimationLog::GetSingleton().ClampLog();
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set the maximum number of entries in the animation log.");
+			UICommon::HelpMarker("设置动画日志中的最大条目数。");
 
-			const char* logTypes[] = { "When replaced", "With potential replacements", "All" };
-			if (ImGui::SliderInt("Activate log mode", reinterpret_cast<int*>(&Settings::uAnimationActivateLogMode), 0, 2, logTypes[Settings::uAnimationActivateLogMode])) {
+			const char* logTypes[] = { "被替换时", "有潜在替换时", "全部" };
+			if (ImGui::SliderInt("激活日志模式", reinterpret_cast<int*>(&Settings::uAnimationActivateLogMode), 0, 2, logTypes[Settings::uAnimationActivateLogMode])) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set conditions in which animation clip activation should be logged.");
+			UICommon::HelpMarker("设置记录动画片段激活的条件。");
 
-			if (ImGui::SliderInt("Echo log mode", reinterpret_cast<int*>(&Settings::uAnimationEchoLogMode), 0, 2, logTypes[Settings::uAnimationEchoLogMode])) {
+			if (ImGui::SliderInt("回响日志模式", reinterpret_cast<int*>(&Settings::uAnimationEchoLogMode), 0, 2, logTypes[Settings::uAnimationEchoLogMode])) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set conditions in which animation clip echo should be logged. (Echo is when an animation clip transitions into itself. Happens with some non-looping clips)");
+			UICommon::HelpMarker("设置记录动画片段回响的条件。(回响是指动画片段过渡到自身的情况，发生在某些非循环片段上)");
 
-			if (ImGui::SliderInt("Loop log mode", reinterpret_cast<int*>(&Settings::uAnimationLoopLogMode), 0, 2, logTypes[Settings::uAnimationLoopLogMode])) {
+			if (ImGui::SliderInt("循环日志模式", reinterpret_cast<int*>(&Settings::uAnimationLoopLogMode), 0, 2, logTypes[Settings::uAnimationLoopLogMode])) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set conditions in which animation clip looping should be logged.");
+			UICommon::HelpMarker("设置记录动画片段循环的条件。");
 
-			if (ImGui::Checkbox("Only log current project", &Settings::bAnimationLogOnlyActiveGraph)) {
+			if (ImGui::Checkbox("仅记录当前项目", &Settings::bAnimationLogOnlyActiveGraph)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to only log animation clips from the active behavior graph - filter out first person animations when in third person, etc.");
+			UICommon::HelpMarker("启用后仅记录来自动画行为图的动画片段 - 过滤掉第三人称时的第一人称动画等。");
 
-			if (ImGui::Checkbox("Write to log file##AnimationLog", &Settings::bAnimationLogWriteToTextLog)) {
+			if (ImGui::Checkbox("写入日志文件##AnimationLog", &Settings::bAnimationLogWriteToTextLog)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to also log the clips into the file at 'Documents\\My Games\\Skyrim Special Edition\\SKSE\\OpenAnimationReplacer.log'.");
+			UICommon::HelpMarker("启用后将动画片段也记录到'Documents\\My Games\\Skyrim Special Edition\\SKSE\\OpenAnimationReplacer.log'文件中。");
 
 			ImGui::Spacing();
 			ImGui::Separator();
 
 			// Animation event log settings
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("Animation Event Log Settings");
+			ImGui::TextUnformatted("动画事件日志设置");
 			ImGui::Spacing();
 
 			float tempSize[2] = { Settings::fAnimationEventLogWidth, Settings::fAnimationEventLogHeight };
-			if (ImGui::SliderFloat2("Event Log Size", tempSize, 300.f, 1500.f, "%.0f")) {
+			if (ImGui::SliderFloat2("事件日志大小", tempSize, 300.f, 1500.f, "%.0f")) {
 				Settings::fAnimationEventLogWidth = tempSize[0];
 				Settings::fAnimationEventLogHeight = tempSize[1];
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Width and height of the animation event log.");
+			UICommon::HelpMarker("动画事件日志的宽度和高度。");
 
-			if (ImGui::Checkbox("Write to log file##EventLog", &Settings::bAnimationEventLogWriteToTextLog)) {
+			if (ImGui::Checkbox("写入日志文件##EventLog", &Settings::bAnimationEventLogWriteToTextLog)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to also log animation events into the file at 'Documents\\My Games\\Skyrim Special Edition\\SKSE\\OpenAnimationReplacer.log'.");
+			UICommon::HelpMarker("启用后将动画事件也记录到'Documents\\My Games\\Skyrim Special Edition\\SKSE\\OpenAnimationReplacer.log'文件中。");
 
 			ImGui::Spacing();
 
 			float tempOffset[2] = { Settings::fAnimationLogsOffsetX, Settings::fAnimationLogsOffsetY };
-			if (ImGui::SliderFloat2("Log Offset", tempOffset, 0.f, 500.f, "%.0f")) {
+			if (ImGui::SliderFloat2("日志偏移", tempOffset, 0.f, 500.f, "%.0f")) {
 				Settings::fAnimationLogsOffsetX = tempOffset[0];
 				Settings::fAnimationLogsOffsetY = tempOffset[1];
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Position offset from the corner of the screen used by the logs.");
+			UICommon::HelpMarker("日志使用的屏幕角落位置偏移。");
 
 			ImGui::Spacing();
 			ImGui::Separator();
 
 			// Workarounds
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("Workarounds");
+			ImGui::TextUnformatted("变通设置");
 			ImGui::SameLine();
-			UICommon::HelpMarker("These settings are workarounds for some issues with Legacy replacer mods.");
+			UICommon::HelpMarker("这些设置是用于解决传统替换Mod某些问题的变通方法。");
 			ImGui::Spacing();
 
-			if (ImGui::Checkbox("Don't reset on loop the state data of Random conditions by default in Legacy mods", &Settings::bLegacyKeepRandomResultsByDefault)) {
+			if (ImGui::Checkbox("默认不重置传统Mod中随机条件的循环状态数据", &Settings::bLegacyKeepRandomResultsByDefault)) {
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set to disable the setting \"Should reset on loop/echo\" by default in Random conditions for Legacy replacer mods. This will make them behave as previously expected. Changing this setting takes effect after restarting the game.");
+			UICommon::HelpMarker("设置为默认禁用传统替换Mod中随机条件的\"循环/回响时重置\"设置。这将使它们表现得像以前一样。更改此设置后重启游戏生效。");
 
 			ImGui::Spacing();
 			ImGui::Separator();
 
 			// Experimental settings
 			ImGui::AlignTextToFramePadding();
-			ImGui::TextUnformatted("Experimental Settings");
+			ImGui::TextUnformatted("实验性设置");
 			ImGui::SameLine();
-			UICommon::HelpMarker("These settings are considered experimental and might not work correctly for you. They take effect after restarting the game.");
+			UICommon::HelpMarker("这些设置被认为是实验性的，可能无法正常工作。重启游戏后生效。");
 			ImGui::Spacing();
 
-			if (ImGui::Checkbox("Disable preloading", &Settings::bDisablePreloading)) {
+			if (ImGui::Checkbox("禁用预加载", &Settings::bDisablePreloading)) {
 				if (Settings::bDisablePreloading) {
 					Settings::bLoadDefaultBehaviorsInMainMenu = false;
 				}
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Set to disable preloading all animations when the behavior is first loaded. This is not recommended, and the setting has been proven to cause some differences in animation behavior.");
+			UICommon::HelpMarker("设置为禁用行为首次加载时预加载所有动画。不推荐这样做，该设置已被证明会导致某些动画行为差异。");
 
-			if (ImGui::Checkbox("Increase animation limit", &Settings::bIncreaseAnimationLimit)) {
+			if (ImGui::Checkbox("增加动画限制", &Settings::bIncreaseAnimationLimit)) {
 				Settings::ClampAnimLimit();
 				Settings::WriteSettings();
 			}
 			ImGui::SameLine();
-			UICommon::HelpMarker("Enable to increase the animation limit to double the default value. Should generally work fine, but I might have missed some places to patch in the game code so this is still considered to be experimental. There's no benefit in enabling this if you're not going over the limit.");
+			UICommon::HelpMarker("启用后将动画限制增加到默认值的两倍。应该通常可以正常工作，但我可能在游戏代码中遗漏了一些需要修补的地方，所以这仍被认为是实验性的。如果您不打算超过限制，启用此设置没有好处。");
 		}
 
 		ImGui::End();
@@ -570,9 +570,9 @@ namespace UI
 	void UIMain::DrawMissingPlugins()
 	{
 		if (ImGui::BeginTable("MissingPlugins", 3, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_BordersOuter)) {
-			ImGui::TableSetupColumn("Plugin", ImGuiTableColumnFlags_WidthStretch);
-			ImGui::TableSetupColumn("Min required", ImGuiTableColumnFlags_WidthFixed, 100.f);
-			ImGui::TableSetupColumn("Current", ImGuiTableColumnFlags_WidthFixed, 100.f);
+			ImGui::TableSetupColumn("插件", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("最低要求", ImGuiTableColumnFlags_WidthFixed, 100.f);
+			ImGui::TableSetupColumn("当前版本", ImGuiTableColumnFlags_WidthFixed, 100.f);
 			ImGui::TableSetupScrollFreeze(0, 1);
 			ImGui::TableHeadersRow();
 
@@ -592,7 +592,7 @@ namespace UI
 				if (currentPluginVersion > 0) {
 					ImGui::TextUnformatted(currentPluginVersion.string("."sv).data());
 				} else {
-					ImGui::TextUnformatted("Missing");
+					ImGui::TextUnformatted("未找到");
 				}
 			});
 
@@ -603,9 +603,9 @@ namespace UI
 	void UIMain::DrawInvalidPlugins()
 	{
 		if (ImGui::BeginTable("InvalidPlugins", 3, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_BordersOuter)) {
-			ImGui::TableSetupColumn("Plugin", ImGuiTableColumnFlags_WidthStretch);
-			ImGui::TableSetupColumn("Min required", ImGuiTableColumnFlags_WidthFixed, 100.f);
-			ImGui::TableSetupColumn("Current", ImGuiTableColumnFlags_WidthFixed, 100.f);
+			ImGui::TableSetupColumn("插件", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("最低要求", ImGuiTableColumnFlags_WidthFixed, 100.f);
+			ImGui::TableSetupColumn("当前版本", ImGuiTableColumnFlags_WidthFixed, 100.f);
 			ImGui::TableSetupScrollFreeze(0, 1);
 			ImGui::TableHeadersRow();
 
@@ -625,7 +625,7 @@ namespace UI
 				if (currentPluginVersion > 0) {
 					ImGui::TextUnformatted(currentPluginVersion.string("."sv).data());
 				} else {
-					ImGui::TextUnformatted("Missing");
+					ImGui::TextUnformatted("未找到");
 				}
 			});
 
@@ -636,8 +636,8 @@ namespace UI
 	void UIMain::DrawConflictingSubMods() const
 	{
 		if (ImGui::BeginTable("ConflictingSubMods", 2, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_BordersOuter)) {
-			ImGui::TableSetupColumn("Submod", ImGuiTableColumnFlags_WidthStretch);
-			ImGui::TableSetupColumn("Priority", ImGuiTableColumnFlags_WidthFixed, 100.f);
+			ImGui::TableSetupColumn("子Mod", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("优先级", ImGuiTableColumnFlags_WidthFixed, 100.f);
 			ImGui::TableSetupScrollFreeze(0, 1);
 			ImGui::TableHeadersRow();
 
@@ -680,7 +680,7 @@ namespace UI
 	void UIMain::DrawReplacerModsWithInvalidConditions() const
 	{
 		if (ImGui::BeginTable("ReplacerModsWithInvalidConditions", 1, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_BordersOuter)) {
-			ImGui::TableSetupColumn("Replacer mod", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("替换Mod", ImGuiTableColumnFlags_WidthStretch);
 			ImGui::TableSetupScrollFreeze(0, 1);
 			ImGui::TableHeadersRow();
 
@@ -699,8 +699,8 @@ namespace UI
 	void UIMain::DrawSubModsWithInvalidConditions() const
 	{
 		if (ImGui::BeginTable("SubModsWithInvalidConditions", 2, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_BordersOuter)) {
-			ImGui::TableSetupColumn("Parent mod", ImGuiTableColumnFlags_WidthStretch);
-			ImGui::TableSetupColumn("Submod", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("母Mod", ImGuiTableColumnFlags_WidthStretch);
+			ImGui::TableSetupColumn("子Mod", ImGuiTableColumnFlags_WidthStretch);
 			ImGui::TableSetupScrollFreeze(0, 1);
 			ImGui::TableHeadersRow();
 
@@ -724,20 +724,20 @@ namespace UI
 	{
 		static char nameFilterBuf[32] = "";
 		ImGui::SetNextItemWidth(ImGui::GetFontSize() * 18);
-		ImGui::InputTextWithHint("Filter", "Mod/submod/author name...", nameFilterBuf, IM_ARRAYSIZE(nameFilterBuf));
+		ImGui::InputTextWithHint("筛选", "Mod/子Mod/作者名...", nameFilterBuf, IM_ARRAYSIZE(nameFilterBuf));
 		ImGui::SameLine();
-		UICommon::HelpMarker("Type a part of a mod/submod/author name to filter the list.");
+		UICommon::HelpMarker("输入Mod/子Mod/作者名称的一部分来筛选列表。");
 
-		const float offset = ImGui::CalcTextSize("Inspect Mode").x + ImGui::CalcTextSize("User Mode").x + ImGui::CalcTextSize("Author Mode").x + ImGui::CalcTextSize("(?)").x + 100.f;
+		const float offset = ImGui::CalcTextSize("检视模式").x + ImGui::CalcTextSize("用户模式").x + ImGui::CalcTextSize("作者模式").x + ImGui::CalcTextSize("(?)").x + 100.f;
 		ImGui::SameLine(ImGui::GetWindowWidth() - offset);
 
-		ImGui::RadioButton("Inspect Mode", reinterpret_cast<int*>(&_editMode), 0);
+		ImGui::RadioButton("检视模式", reinterpret_cast<int*>(&_editMode), 0);
 		ImGui::SameLine();
-		ImGui::RadioButton("User Mode", reinterpret_cast<int*>(&_editMode), 1);
+		ImGui::RadioButton("用户模式", reinterpret_cast<int*>(&_editMode), 1);
 		ImGui::SameLine();
-		ImGui::RadioButton("Author Mode", reinterpret_cast<int*>(&_editMode), 2);
+		ImGui::RadioButton("作者模式", reinterpret_cast<int*>(&_editMode), 2);
 		ImGui::SameLine();
-		UICommon::HelpMarker("Editing in author mode will edit the original config files contained in the mod folders. User mode creates and saves a new configuration file that will override the original one when the settings are reloaded. That won't affect the original file.");
+		UICommon::HelpMarker("作者模式编辑将修改Mod文件夹中的原始配置文件。用户模式会创建并保存一个新的配置文件，在重新加载设置时会覆盖原始文件。这不会影响原始文件。");
 
 		ImGui::Separator();
 
@@ -794,7 +794,7 @@ namespace UI
 
 		if (a_replacerMod->GetConfigSource() == Parsing::ConfigSource::kUser) {
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::USER_MOD_COLOR, "(User)");
+			UICommon::TextUnformattedColored(UICommon::USER_MOD_COLOR, "(用户)");
 		}
 
 		// node name
@@ -811,7 +811,7 @@ namespace UI
 				const std::string nameId = "Mod name##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + "name";
 				ImGui::SetNextItemWidth(-150.f);
 				std::string tempName(a_replacerMod->GetName());
-				if (ImGui::InputTextWithHint(nameId.data(), "Mod name", &tempName)) {
+				if (ImGui::InputTextWithHint(nameId.data(), "Mod名称", &tempName)) {
 					a_replacerMod->SetName(tempName);
 					a_replacerMod->SetDirty(true);
 				}
@@ -822,7 +822,7 @@ namespace UI
 			if (!a_replacerMod->IsLegacy() && _editMode == EditMode::kAuthor) {
 				ImGui::SetNextItemWidth(250.f);
 				std::string tempAuthor(a_replacerMod->GetAuthor());
-				if (ImGui::InputTextWithHint(authorId.data(), "Author", &tempAuthor)) {
+				if (ImGui::InputTextWithHint(authorId.data(), "作者", &tempAuthor)) {
 					a_replacerMod->SetAuthor(tempAuthor);
 					a_replacerMod->SetDirty(true);
 				}
@@ -830,7 +830,7 @@ namespace UI
 				if (ImGui::BeginTable(authorId.data(), 1, ImGuiTableFlags_BordersOuter)) {
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
-					UICommon::TextDescriptionRightAligned("Author");
+					UICommon::TextDescriptionRightAligned("作者");
 					ImGui::AlignTextToFramePadding();
 					ImGui::TextUnformatted(a_replacerMod->GetAuthor().data());
 					ImGui::EndTable();
@@ -838,7 +838,7 @@ namespace UI
 			}
 
 			// Mod description
-			const std::string descriptionId = "Mod description##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + "description";
+			const std::string descriptionId = "Mod描述##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + "description";
 			if (!a_replacerMod->IsLegacy() && _editMode == EditMode::kAuthor) {
 				ImGui::SetNextItemWidth(-150.f);
 				std::string tempDescription(a_replacerMod->GetDescription());
@@ -852,7 +852,7 @@ namespace UI
 					ImGui::TableNextRow();
 					ImGui::TableSetColumnIndex(0);
 					ImGui::AlignTextToFramePadding();
-					UICommon::TextDescriptionRightAligned("Description");
+					UICommon::TextDescriptionRightAligned("描述");
 					UICommon::TextUnformattedWrapped(a_replacerMod->GetDescription().data());
 					ImGui::EndTable();
 				}
@@ -861,7 +861,7 @@ namespace UI
 
 			// Condition presets
 			if (_editMode > EditMode::kNone || a_replacerMod->HasConditionPresets()) {
-				const std::string conditionPresetsLabel = "Condition presets##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + "conditionPresets";
+				const std::string conditionPresetsLabel = "条件预设##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + "conditionPresets";
 				ImGuiTreeNodeFlags flags = a_replacerMod->HasConditionPresets() ? ImGuiTreeNodeFlags_DefaultOpen : ImGuiTreeNodeFlags_None;
 				if (ImGui::CollapsingHeader(conditionPresetsLabel.data(), flags)) {
 					ImGui::AlignTextToFramePadding();
@@ -884,8 +884,8 @@ namespace UI
 
 					if (_editMode > EditMode::kNone) {
 						// Add condition preset button
-						constexpr auto popupName = "Adding new condition preset"sv;
-						if (ImGui::Button("Add new condition preset")) {
+						constexpr auto popupName = "添加新条件预设"sv;
+						if (ImGui::Button("添加新条件预设")) {
 							const auto popupPos = ImGui::GetCursorScreenPos();
 							ImGui::SetNextWindowPos(popupPos);
 							ImGui::OpenPopup(popupName.data());
@@ -893,7 +893,7 @@ namespace UI
 
 						if (ImGui::BeginPopupModal(popupName.data(), nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 							std::string conditionPresetName;
-							if (ImGui::InputTextWithHint("##ConditionPresetName", "Type a unique name...", &conditionPresetName, ImGuiInputTextFlags_EnterReturnsTrue)) {
+							if (ImGui::InputTextWithHint("##ConditionPresetName", "输入唯一名称...", &conditionPresetName, ImGuiInputTextFlags_EnterReturnsTrue)) {
 								if (conditionPresetName.size() > 2 && !a_replacerMod->HasConditionPreset(conditionPresetName)) {
 									auto newConditionPreset = std::make_unique<Conditions::ConditionPreset>(conditionPresetName, ""sv);
 									a_replacerMod->AddConditionPreset(newConditionPreset);
@@ -903,7 +903,7 @@ namespace UI
 							}
 							ImGui::SetItemDefaultFocus();
 							ImGui::SameLine();
-							if (ImGui::Button("Cancel")) {
+							if (ImGui::Button("取消")) {
 								ImGui::CloseCurrentPopup();
 							}
 							ImGui::EndPopup();
@@ -915,7 +915,7 @@ namespace UI
 			}
 
 			// Submods
-			ImGui::TextUnformatted("Submods:");
+			ImGui::TextUnformatted("子Mod列表：");
 			a_replacerMod->ForEachSubMod([&](SubMod* a_subMod) {
 				// Filter
 				const auto search = a_filterResults.find(a_subMod->GetName().data());
@@ -935,7 +935,7 @@ namespace UI
 					ImGui::BeginDisabled();
 				}
 				ImGui::BeginDisabled(a_replacerMod->HasInvalidConditions(true) || a_replacerMod->HasInvalidFunctions());
-				if (ImGui::Button(_editMode == EditMode::kAuthor ? "Save mod config (Author)" : "Save mod config (User)")) {
+				if (ImGui::Button(_editMode == EditMode::kAuthor ? "保存Mod配置 (作者)" : "保存Mod配置 (用户)")) {
 					a_replacerMod->SaveConfig(_editMode);
 				}
 				ImGui::EndDisabled();
@@ -945,7 +945,7 @@ namespace UI
 
 				// Reload mod config
 				ImGui::SameLine();
-				UICommon::ButtonWithConfirmationModal("Reload mod config", "Are you sure you want to reload the config?\nThis operation cannot be undone!\n\n"sv, [&]() {
+				UICommon::ButtonWithConfirmationModal("重载Mod配置", "确定要重载配置吗？\n此操作无法撤销！\n\n"sv, [&]() {
 					OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ReloadReplacerModConfigJob>(a_replacerMod);
 				});
 
@@ -955,7 +955,7 @@ namespace UI
 					ImGui::BeginDisabled();
 				}
 				ImGui::SameLine();
-				UICommon::ButtonWithConfirmationModal("Delete mod user config", "Are you sure you want to delete the user config?\nThis operation cannot be undone!\n\n"sv, [&]() {
+				UICommon::ButtonWithConfirmationModal("删除Mod用户配置", "确定要删除用户配置吗？\n此操作无法撤销！\n\n"sv, [&]() {
 					Utils::DeleteUserConfig(a_replacerMod->GetPath());
 					OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ReloadReplacerModConfigJob>(a_replacerMod);
 				});
@@ -990,7 +990,7 @@ namespace UI
 				OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::UpdateSubModJob>(a_subMod, true);
 				a_subMod->SetDirty(true);
 			}
-			UICommon::AddTooltip("If unchecked, the submod will be disabled and none of its replacement animations will be considered.");
+			UICommon::AddTooltip("如果取消勾选，子Mod将被禁用，其所有替换动画都不会被考虑。");
 			ImGui::PopID();
 		}
 
@@ -1002,15 +1002,15 @@ namespace UI
 		switch (a_subMod->GetConfigSource()) {
 		case Parsing::ConfigSource::kUser:
 			ImGui::SameLine();
-			UICommon::TextUnformattedColored(UICommon::USER_MOD_COLOR, "(User)");
+			UICommon::TextUnformattedColored(UICommon::USER_MOD_COLOR, "(用户)");
 			break;
 		case Parsing::ConfigSource::kLegacy:
 			ImGui::SameLine();
-			UICommon::TextUnformattedDisabled("(Legacy)");
+			UICommon::TextUnformattedDisabled("(传统)");
 			break;
 		case Parsing::ConfigSource::kLegacyActorBase:
 			ImGui::SameLine();
-			UICommon::TextUnformattedDisabled("(Legacy ActorBase)");
+			UICommon::TextUnformattedDisabled("(传统角色基础)");
 			break;
 		}
 
@@ -1030,7 +1030,7 @@ namespace UI
 
 		float cursorPosX = ImGui::GetCursorPosX();
 
-		std::string priorityText = "Priority: " + std::to_string(a_subMod->GetPriority());
+		std::string priorityText = "优先级: " + std::to_string(a_subMod->GetPriority());
 		UICommon::SecondColumn(_firstColumnWidthPercent);
 		if (ImGui::GetCursorPosX() < cursorPosX) {
 			// make sure we don't draw priority text over the name
@@ -1049,7 +1049,7 @@ namespace UI
 					std::string subModNameId = "Submod name##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "name";
 					ImGui::SetNextItemWidth(-150.f);
 					std::string tempName(a_subMod->GetName());
-					if (ImGui::InputTextWithHint(subModNameId.data(), "Submod name", &tempName)) {
+					if (ImGui::InputTextWithHint(subModNameId.data(), "子Mod名称", &tempName)) {
 						a_subMod->SetName(tempName);
 						a_subMod->SetDirty(true);
 					}
@@ -1071,7 +1071,7 @@ namespace UI
 						ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
 						ImGui::AlignTextToFramePadding();
-						UICommon::TextDescriptionRightAligned("Description");
+						UICommon::TextDescriptionRightAligned("描述");
 						UICommon::TextUnformattedWrapped(a_subMod->GetDescription().data());
 						ImGui::EndTable();
 					}
@@ -1093,7 +1093,7 @@ namespace UI
 						ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
 						ImGui::AlignTextToFramePadding();
-						UICommon::TextDescriptionRightAligned("Priority");
+						UICommon::TextDescriptionRightAligned("优先级");
 						ImGui::TextUnformatted(std::to_string(a_subMod->GetPriority()).data());
 						ImGui::EndTable();
 					}
@@ -1104,12 +1104,12 @@ namespace UI
 
 			// Submod override animations folder
 			{
-				std::string overrideAnimationsFolderLabel = "Override animations folder##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "overrideAnimationsFolder";
-				std::string overrideAnimationsFolderTooltip = "If set, this submod will load animations from the given folder (in the parent directory) instead of its own folder.";
+				std::string overrideAnimationsFolderLabel = "覆盖动画文件夹##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "overrideAnimationsFolder";
+				std::string overrideAnimationsFolderTooltip = "如果设置，此子Mod将从指定文件夹（父目录中）加载动画，而不是从自己的文件夹。";
 				if (_editMode != EditMode::kNone) {
 					ImGui::SetNextItemWidth(-220.f);
 					std::string tempOverrideAnimationsFolder(a_subMod->GetOverrideAnimationsFolder());
-					if (ImGui::InputTextWithHint(overrideAnimationsFolderLabel.data(), "Override animations folder", &tempOverrideAnimationsFolder)) {
+					if (ImGui::InputTextWithHint(overrideAnimationsFolderLabel.data(), "覆盖动画文件夹", &tempOverrideAnimationsFolder)) {
 						a_subMod->SetOverrideAnimationsFolder(tempOverrideAnimationsFolder);
 						a_subMod->SetDirty(true);
 					}
@@ -1120,7 +1120,7 @@ namespace UI
 						ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
 						ImGui::AlignTextToFramePadding();
-						UICommon::TextDescriptionRightAligned("Override animations folder");
+						UICommon::TextDescriptionRightAligned("覆盖动画文件夹");
 						ImGui::TextUnformatted(a_subMod->GetOverrideAnimationsFolder().data());
 						ImGui::EndTable();
 					}
@@ -1132,11 +1132,11 @@ namespace UI
 			// Submod required project name
 			{
 				std::string requiredProjectNameId = "Required project name##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "requiredProjectName";
-				std::string requiredProjectNameTooltip = "If set, this submod will only load for the specified project name. Leave empty to load for all projects.";
+				std::string requiredProjectNameTooltip = "如果设置，此子Mod将仅在指定的项目名称下加载。留空则对所有项目加载。";
 				if (_editMode != EditMode::kNone) {
 					ImGui::SetNextItemWidth(-220.f);
 					std::string tempRequiredProjectName(a_subMod->GetRequiredProjectName());
-					if (ImGui::InputTextWithHint(requiredProjectNameId.data(), "Required project name", &tempRequiredProjectName)) {
+					if (ImGui::InputTextWithHint(requiredProjectNameId.data(), "必需项目名称", &tempRequiredProjectName)) {
 						a_subMod->SetRequiredProjectName(tempRequiredProjectName);
 						a_subMod->SetDirty(true);
 					}
@@ -1147,7 +1147,7 @@ namespace UI
 						ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
 						ImGui::AlignTextToFramePadding();
-						UICommon::TextDescriptionRightAligned("Required project name");
+						UICommon::TextDescriptionRightAligned("必需项目名称");
 						ImGui::TextUnformatted(a_subMod->GetRequiredProjectName().data());
 						ImGui::EndTable();
 					}
@@ -1158,8 +1158,8 @@ namespace UI
 
 			// Submod ignore no triggers flag
 			{
-				std::string noTriggersFlagLabel = "Ignore \"Don't Convert Annotations To Triggers\" flag##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "ignoreDontConvertAnnotationsToTriggersFlag";
-				std::string noTriggersFlagTooltip = "If checked, the animation clip flag \"Don't convert annotations to triggers\", set on some animation clips in vanilla, will be ignored. This means that animation triggers (events) that included in the replacer animation file itself as annotations will now run, instead of being ignored.";
+				std::string noTriggersFlagLabel = "忽略\"不将注解转换为触发器\"标志##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "ignoreDontConvertAnnotationsToTriggersFlag";
+				std::string noTriggersFlagTooltip = "如果勾选，将忽略原版中某些动画片段上设置的\"不将注解转换为触发器\"标志。这意味着替换动画文件本身作为注解包含的动画触发器（事件）将运行，而不是被忽略。";
 
 				if (_editMode != EditMode::kNone) {
 					bool tempIgnoreNoTriggersFlag = a_subMod->IsIgnoringDontConvertAnnotationsToTriggersFlag();
@@ -1182,8 +1182,8 @@ namespace UI
 
 			// Submod triggers from annotations only
 			{
-				std::string triggersFromAnnotationsOnlyLabel = "Only use triggers from annotations##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "triggersFromAnnotationsOnly";
-				std::string triggersFromAnnotationsOnlyTooltip = "If checked, the triggers \"baked in\" in the animation clips inside the behavior files will be ignored. The only events that will will be those from annotations inside the animation file.\nThe \"Don't convert annotations to triggers\" flag is still respected, so make sure to enable the above setting if necessary.";
+				std::string triggersFromAnnotationsOnlyLabel = "仅使用注解中的触发器##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "triggersFromAnnotationsOnly";
+				std::string triggersFromAnnotationsOnlyTooltip = "如果勾选，行为文件中动画片段内\"内置\"的触发器将被忽略。唯一的事件将是动画文件内部注解中的事件。\n\"不将注解转换为触发器\"标志仍然有效，因此如有需要请确保启用上述设置。";
 
 				if (_editMode != EditMode::kNone) {
 					bool tempTriggersFromAnnotationsOnly = a_subMod->IsOnlyUsingTriggersFromAnnotations();
@@ -1206,8 +1206,8 @@ namespace UI
 
 			// Submod interruptible
 			{
-				std::string interruptibleLabel = "Interruptible##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "interruptible";
-				std::string interruptibleTooltip = "If checked, the conditions will be checked every frame and the clip will be switched to another one if needed. Mostly useful for looping animations.";
+				std::string interruptibleLabel = "可中断##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "interruptible";
+				std::string interruptibleTooltip = "如果勾选，将每帧检查条件，并根据需要切换到另一个片段。主要对循环动画有用。";
 
 				if (_editMode != EditMode::kNone) {
 					bool tempInterruptible = a_subMod->IsInterruptible();
@@ -1262,15 +1262,15 @@ namespace UI
 			// Submod custom blend time on interrupt
 			if (a_subMod->IsInterruptible()) {
 				const std::string hasCustomBlendTimeLabel = "##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "hasCustomBlendTimeOnInterrupt";
-				const std::string blendTimeLabel = "Custom blend time on interrupt##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "blendTimeOnInterrupt";
-				const std::string blendTimeTooltip = "Sets custom blend time between an animation from this submod and a new one on interrupt.";
+				const std::string blendTimeLabel = "中断时自定义混合时间##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "blendTimeOnInterrupt";
+				const std::string blendTimeTooltip = "设置此子Mod动画与中断时新动画之间的自定义混合时间。";
 				drawBlendTimeOption(CustomBlendType::kInterrupt, hasCustomBlendTimeLabel, blendTimeLabel, blendTimeTooltip);
 			}
 
 			// Submod replace on loop
 			{
-				std::string replaceOnLoopLabel = "Replace on loop##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "replaceOnLoop";
-				std::string replaceOnLoopTooltip = "If checked the conditions will be reevaluated on animation loop and the clip will be switched to another one if needed. Enabled by default.";
+				std::string replaceOnLoopLabel = "循环时替换##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "replaceOnLoop";
+				std::string replaceOnLoopTooltip = "如果勾选，动画循环时将重新评估条件，并根据需要切换到另一个片段。默认启用。";
 
 				if (_editMode != EditMode::kNone) {
 					bool tempReplaceOnLoop = a_subMod->IsReevaluatingOnLoop();
@@ -1294,15 +1294,15 @@ namespace UI
 			// Submod custom blend time on loop
 			if (a_subMod->IsReevaluatingOnLoop()) {
 				const std::string hasCustomBlendTimeLabel = "##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "hasCustomBlendTimeOnLoop";
-				const std::string blendTimeLabel = "Custom blend time on loop##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "blendTimeOnLoop";
-				const std::string blendTimeTooltip = "Sets custom blend time between an animation from this submod and a new one when replacing on loop.";
+				const std::string blendTimeLabel = "循环时自定义混合时间##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "blendTimeOnLoop";
+				const std::string blendTimeTooltip = "设置循环替换时此子Mod动画与新动画之间的自定义混合时间。";
 				drawBlendTimeOption(CustomBlendType::kLoop, hasCustomBlendTimeLabel, blendTimeLabel, blendTimeTooltip);
 			}
 
 			// Submod replace on echo
 			{
-				std::string replaceOnEchoLabel = "Replace on echo##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "replaceOnEcho";
-				std::string replaceOnEchoTooltip = "If checked the conditions will be reevaluated on animation echo and the clip will be switched to another one if needed. Disabled by default because of cosmetic issues with several animations, should be only enabled on animations that actually need it.";
+				std::string replaceOnEchoLabel = "回响时替换##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "replaceOnEcho";
+				std::string replaceOnEchoTooltip = "如果勾选，动画回响时将重新评估条件，并根据需要切换到另一个片段。默认禁用，因为某些动画存在外观问题，只应在真正需要的动画上启用。";
 
 				if (_editMode != EditMode::kNone) {
 					bool tempReplaceOnEcho = a_subMod->IsReevaluatingOnEcho();
@@ -1326,15 +1326,15 @@ namespace UI
 			// Submod custom blend time on echo
 			if (a_subMod->IsReevaluatingOnEcho()) {
 				const std::string hasCustomBlendTimeLabel = "##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "hasCustomBlendTimeOnEcho";
-				const std::string blendTimeLabel = "Custom blend time on echo##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "blendTimeOnEcho";
-				const std::string blendTimeTooltip = "Sets custom blend time between an animation from this submod and a new one when replacing on echo.";
+				const std::string blendTimeLabel = "回响时自定义混合时间##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "blendTimeOnEcho";
+				const std::string blendTimeTooltip = "设置回响替换时此子Mod动画与新动画之间的自定义混合时间。";
 				drawBlendTimeOption(CustomBlendType::kEcho, hasCustomBlendTimeLabel, blendTimeLabel, blendTimeTooltip);
 			}
 
 			// Submod run functions on loop
 			{
-				std::string runFunctionsOnLoopLabel = "Run functions on loop##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "runFunctionsOnLoop";
-				std::string runFunctionsOnLoopTooltip = "If checked the OnDeactivate/OnActivate functions will run when the clip loops. Enabled by default.";
+				std::string runFunctionsOnLoopLabel = "循环时运行函数##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "runFunctionsOnLoop";
+				std::string runFunctionsOnLoopTooltip = "如果勾选，片段循环时将运行OnDeactivate/OnActivate函数。默认启用。";
 
 				if (_editMode != EditMode::kNone) {
 					bool tempRunFunctionsOnLoop = a_subMod->IsRunningFunctionsOnLoop();
@@ -1357,8 +1357,8 @@ namespace UI
 
 			// Submod run functions on echo
 			{
-				std::string runFunctionsOnEchoLabel = "Run functions on echo##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "runFunctionsOnEcho";
-				std::string runFunctionsOnEchoTooltip = "If checked the OnDeactivate/OnActivate functions will run on clip echo. Enabled by default.";
+				std::string runFunctionsOnEchoLabel = "回响时运行函数##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "runFunctionsOnEcho";
+				std::string runFunctionsOnEchoTooltip = "如果勾选，片段回响时将运行OnDeactivate/OnActivate函数。默认启用。";
 
 				if (_editMode != EditMode::kNone) {
 					bool tempRunFunctionsOnEcho = a_subMod->IsRunningFunctionsOnEcho();
@@ -1382,10 +1382,10 @@ namespace UI
 			// Submod animations
 			{
 				// list animation files
-				std::string filesTreeNodeLabel = "Animation Files##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "filesNode";
+				std::string filesTreeNodeLabel = "动画文件##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "filesNode";
 				if (ImGui::CollapsingHeader(filesTreeNodeLabel.data())) {
 					ImGui::AlignTextToFramePadding();
-					UICommon::TextUnformattedWrapped("This section only lists all the animation files found in the submod. The \"Replacement Animations\" section below lists actual loaded replacement animations per behavior project, and allows configuration.");
+					UICommon::TextUnformattedWrapped("此部分仅列出子Mod中找到的所有动画文件。下面的\"替换动画\"部分列出每个行为项目的实际加载的替换动画，并允许配置。");
 
 					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
@@ -1423,7 +1423,7 @@ namespace UI
 					ImGui::PopStyleVar();
 				}
 
-				std::string animationsTreeNodeLabel = "Replacement Animations##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "animationsNode";
+				std::string animationsTreeNodeLabel = "替换动画##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "animationsNode";
 				if (ImGui::CollapsingHeader(animationsTreeNodeLabel.data())) {
 					UnloadedAnimationsWarning();
 
@@ -1452,7 +1452,7 @@ namespace UI
 									OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::UpdateSubModJob>(a_subMod, false);
 									a_subMod->SetDirty(true);
 								}
-								UICommon::AddTooltip("If unchecked, the replacement animation will be disabled and will not be considered.");
+								UICommon::AddTooltip("如果取消勾选，替换动画将被禁用且不会被考虑。");
 								ImGui::PopID();
 								ImGui::SameLine();
 							}
@@ -1498,8 +1498,8 @@ namespace UI
 									if (!a_replacementAnimation->IsSynchronizedAnimation()) {
 										// variant mode
 										if (_editMode != EditMode::kNone) {
-											const std::string label = "Variant Mode##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants)) + "variantMode";
-											const std::string current = variantMode == VariantMode::kRandom ? "Random" : "Sequential";
+											const std::string label = "变体模式##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants)) + "variantMode";
+											const std::string current = variantMode == VariantMode::kRandom ? "随机" : "顺序";
 											int tempVariantMode = static_cast<int>(variantMode);
 											ImGui::SetNextItemWidth(ImGui::GetFontSize() * 15);
 											if (ImGui::SliderInt(label.data(), &tempVariantMode, 0, 1, current.data(), ImGuiSliderFlags_NoInput)) {
@@ -1510,9 +1510,9 @@ namespace UI
 												OpenAnimationReplacer::GetSingleton().ClearAllConditionStateData();
 											}
 										} else {
-											UICommon::TextUnformattedDisabled("Variant Mode:");
+											UICommon::TextUnformattedDisabled("变体模式:");
 											ImGui::SameLine();
-											ImGui::TextUnformatted(variantMode == VariantMode::kRandom ? "Random" : "Sequential");
+											ImGui::TextUnformatted(variantMode == VariantMode::kRandom ? "随机" : "顺序");
 										}
 									}
 
@@ -1521,29 +1521,29 @@ namespace UI
 										auto getScopeName = [](const Conditions::StateDataScope a_scope) {
 											switch (a_scope) {
 											case Conditions::StateDataScope::kLocal:
-												return "Local"sv;
+												return "本地"sv;
 											case Conditions::StateDataScope::kSubMod:
-												return "Submod"sv;
+												return "子Mod"sv;
 											case Conditions::StateDataScope::kReplacerMod:
-												return "Replacer mod"sv;
+												return "替换Mod"sv;
 											}
-											return "INVALID"sv;
+											return "无效"sv;
 										};
 
 										auto getScopeTooltip = [](const Conditions::StateDataScope a_scope) {
 											switch (a_scope) {
 											case Conditions::StateDataScope::kLocal:
-												return "The variant data (random value, played history) is unique per active animation clip."sv;
+												return "变体数据（随机值、播放历史）对每个活动动画片段都是唯一的。"sv;
 											case Conditions::StateDataScope::kSubMod:
-												return "The variant data (random value, optionally played history) is shared between all animation clips in the submod, as long as their variant scope is set to the same value.\n\nThe data will be kept alive until all active clips from narrower scopes are inactive."sv;
+												return "只要变体作用域设置为相同值，变体数据（随机值、可选的播放历史）在子Mod的所有动画片段之间共享。\n\n数据将保持活跃，直到所有较窄作用域的活动片段都处于非活动状态。"sv;
 											case Conditions::StateDataScope::kReplacerMod:
-												return "The variant data (random value, optionally played history) is shared between all animation clips in the entire replacer mod, as long as their variant scope is set to the same value.\n\nThe data will be kept alive until all active clips from narrower scopes are inactive."sv;
+												return "只要变体作用域设置为相同值，变体数据（随机值、可选的播放历史）在整个替换Mod的所有动画片段之间共享。\n\n数据将保持活跃，直到所有较窄作用域的活动片段都处于非活动状态。"sv;
 											}
-											return "INVALID"sv;
+											return "无效"sv;
 										};
 
 										if (_editMode != EditMode::kNone) {
-											const std::string variantScopeLabel = "Variant state scope##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
+											const std::string variantScopeLabel = "变体状态作用域##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
 											if (ImGui::BeginCombo(variantScopeLabel.data(), getScopeName(variantScope).data())) {
 												for (Conditions::StateDataScope i = Conditions::StateDataScope::kLocal; i <= Conditions::StateDataScope::kReplacerMod; i = static_cast<Conditions::StateDataScope>(static_cast<int32_t>(i) << 1)) {
 													const bool bIsCurrent = i == variantScope;
@@ -1562,7 +1562,7 @@ namespace UI
 												ImGui::EndCombo();
 											}
 										} else {
-											const auto scopeText = std::format("Variant state scope: {}", getScopeName(variantScope));
+											const auto scopeText = std::format("变体状态作用域: {}", getScopeName(variantScope));
 											ImGui::TextUnformatted(scopeText.data());
 											UICommon::AddTooltip(getScopeTooltip(variantScope).data());
 										}
@@ -1571,7 +1571,7 @@ namespace UI
 									// blend between variants
 									{
 										bool tempShouldBlend = variants.ShouldBlendBetweenVariants();
-										const std::string shouldBlendLabel = "Blend between variants##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
+										const std::string shouldBlendLabel = "变体之间混合##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
 										ImGui::BeginDisabled(_editMode == EditMode::kNone);
 										if (ImGui::Checkbox(shouldBlendLabel.data(), &tempShouldBlend)) {
 											variants.SetShouldBlendBetweenVariants(tempShouldBlend);
@@ -1579,13 +1579,13 @@ namespace UI
 										}
 										ImGui::EndDisabled();
 										ImGui::SameLine();
-										UICommon::HelpMarker("If disabled, variants will not have any blend time between each other on loop and echo.");
+										UICommon::HelpMarker("如果禁用，变体在循环和回响时彼此之间不会有任何混合时间。");
 									}
 
 									// reset random on loop / echo
 									{
 										bool tempShouldResetRandom = variants.ShouldResetRandomOnLoopOrEcho();
-										const std::string shouldResetRandomLabel = "Reset random on loop or echo##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
+										const std::string shouldResetRandomLabel = "循环或回响时重置随机##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
 										ImGui::BeginDisabled(_editMode == EditMode::kNone);
 										if (ImGui::Checkbox(shouldResetRandomLabel.data(), &tempShouldResetRandom)) {
 											variants.SetShouldResetRandomOnLoopOrEcho(tempShouldResetRandom);
@@ -1593,14 +1593,14 @@ namespace UI
 										}
 										ImGui::EndDisabled();
 										ImGui::SameLine();
-										UICommon::HelpMarker("If enabled, the random number that is used to select a random variant will be reset on every loop or echo.");
+										UICommon::HelpMarker("如果启用，用于选择随机变体的随机数将在每次循环或回响时重置。");
 									}
 
 									// share played history
 									{
 										if (variants.GetVariantStateScope() > Conditions::StateDataScope::kLocal) {
 											bool tempShouldSharePlayedHistory = variants.ShouldSharePlayedHistory();
-											const std::string shouldSharePlayedHistoryLabel = "Share played history##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
+											const std::string shouldSharePlayedHistoryLabel = "共享播放历史##" + std::to_string(reinterpret_cast<std::uintptr_t>(&variants));
 											ImGui::BeginDisabled(_editMode == EditMode::kNone);
 											if (ImGui::Checkbox(shouldSharePlayedHistoryLabel.data(), &tempShouldSharePlayedHistory)) {
 												variants.SetShouldSharePlayedHistory(tempShouldSharePlayedHistory);
@@ -1609,7 +1609,7 @@ namespace UI
 											}
 											ImGui::EndDisabled();
 											ImGui::SameLine();
-											UICommon::HelpMarker("If enabled, the played history (for the \"Play once\" setting) will be shared between all variants with the same variant state scope.");
+											UICommon::HelpMarker("如果启用，播放历史（用于\"仅播放一次\"设置）将在具有相同变体状态作用域的所有变体之间共享。");
 										}
 									}
 
@@ -1636,12 +1636,12 @@ namespace UI
 												a_subMod->SetDirty(true);
 												OpenAnimationReplacer::GetSingleton().ClearAllConditionStateData();
 											}
-											UICommon::AddTooltip("If unchecked, the replacement animation variant will be disabled and will not be considered.");
+											UICommon::AddTooltip("如果取消勾选，替换动画变体将被禁用且不会被考虑。");
 											ImGui::SameLine();
 
 											if (variantMode == VariantMode::kSequential || a_variant.ShouldPlayOnce()) {
 												ImGui::BeginDisabled(index == 0);
-												if (ImGui::ArrowButton("Move variant up", ImGuiDir_Up)) {
+												if (ImGui::ArrowButton("上移变体", ImGuiDir_Up)) {
 													variants.SwapVariants(index, index - 1);
 													a_replacementAnimation->UpdateVariantCache();
 													a_subMod->SetDirty(true);
@@ -1651,7 +1651,7 @@ namespace UI
 												ImGui::SameLine();
 
 												ImGui::BeginDisabled(index >= variants.GetVariantCount() - 1);
-												if (ImGui::ArrowButton("Move variant down", ImGuiDir_Down)) {
+												if (ImGui::ArrowButton("下移变体", ImGuiDir_Down)) {
 													variants.SwapVariants(index, index + 1);
 													a_replacementAnimation->UpdateVariantCache();
 													a_subMod->SetDirty(true);
@@ -1662,43 +1662,43 @@ namespace UI
 											} else if (variantMode == VariantMode::kRandom) {
 												float tempWeight = a_variant.GetWeight();
 												ImGui::SetNextItemWidth(ImGui::GetFontSize() * 10);
-												if (ImGui::InputFloat("Weight", &tempWeight, .01f, 1.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+												if (ImGui::InputFloat("权重", &tempWeight, .01f, 1.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)) {
 													tempWeight = std::max(0.f, tempWeight);
 													a_variant.SetWeight(tempWeight);
 													a_replacementAnimation->UpdateVariantCache();
 													a_subMod->SetDirty(true);
 													OpenAnimationReplacer::GetSingleton().ClearAllConditionStateData();
 												}
-												UICommon::AddTooltip("The weight of this variant used for the weighted random selection (e.g. a variant with a weight of 2 will be twice as likely to be picked than a variant with a weight of 1)");
+												UICommon::AddTooltip("用于加权随机选择的此变体的权重（例如，权重为2的变体被选中的可能性是权重为1的变体的两倍）");
 												ImGui::SameLine();
 											}
 
 											bool tempPlayOnce = a_variant.ShouldPlayOnce();
-											if (ImGui::Checkbox(variantMode == VariantMode::kRandom ? "Play first and once" : "Play once", &tempPlayOnce)) {
+											if (ImGui::Checkbox(variantMode == VariantMode::kRandom ? "先播放且仅一次" : "仅播放一次", &tempPlayOnce)) {
 												a_variant.SetPlayOnce(tempPlayOnce);
 												a_replacementAnimation->UpdateVariantCache();
 												a_subMod->SetDirty(true);
 												OpenAnimationReplacer::GetSingleton().ClearAllConditionStateData();
 											}
-											UICommon::AddTooltip(variantMode == VariantMode::kRandom ? "Variants marked with this will play in sequence before other random variants, and will not repeat, until the animation data resets after a while of inactivity." : "If checked, the variant will only play once until the animation data resets after a while of inactivity.");
+											UICommon::AddTooltip(variantMode == VariantMode::kRandom ? "标记此选项的变体将在其他随机变体之前按顺序播放，并且不会重复，直到动画数据在一段时间不活动后重置。" : "如果勾选，变体将仅播放一次，直到动画数据在一段时间不活动后重置。");
 											ImGui::SameLine();
 											ImGui::PopID();
 										} else {
 											switch (variantMode) {
 											case VariantMode::kRandom:
 												{
-													UICommon::TextUnformattedDisabled("Weight:");
+													UICommon::TextUnformattedDisabled("权重:");
 													ImGui::SameLine();
 													ImGui::TextUnformatted(std::format("{}", a_variant.GetWeight()).data());
-													UICommon::AddTooltip("The weight of this variant used for the weighted random selection (e.g. a variant with a weight of 2 will be twice as likely to be picked than a variant with a weight of 1)");
+													UICommon::AddTooltip("用于加权随机选择的此变体的权重（例如，权重为2的变体被选中的可能性是权重为1的变体的两倍）");
 													ImGui::SameLine();
 												}
 												break;
 											case VariantMode::kSequential:
 												{
 													if (a_variant.ShouldPlayOnce()) {
-														ImGui::TextUnformatted("[Play once]");
-														UICommon::AddTooltip("The variant will only play once until the animation data resets after a while of inactivity.");
+														ImGui::TextUnformatted("[仅播放一次]");
+														UICommon::AddTooltip("变体将仅播放一次，直到动画数据在一段时间不活动后重置。");
 														ImGui::SameLine();
 													}
 												}
@@ -1706,7 +1706,7 @@ namespace UI
 											}
 										}
 
-										UICommon::TextUnformattedDisabled("Filename:");
+										UICommon::TextUnformattedDisabled("文件名:");
 										ImGui::SameLine();
 
 										bIsPreviewing = IsPreviewingAnimation(refrToEvaluate, a_replacementAnimation, a_variant.GetIndex());
@@ -1753,7 +1753,7 @@ namespace UI
 			}
 
 			// Submod conditions
-			std::string conditionsTreeNodeLabel = "Conditions##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "conditionsNode";
+			std::string conditionsTreeNodeLabel = "条件##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "conditionsNode";
 			if (ImGui::CollapsingHeader(conditionsTreeNodeLabel.data(), ImGuiTreeNodeFlags_DefaultOpen)) {
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
@@ -1773,7 +1773,7 @@ namespace UI
 
 			// Submod paired conditions
 			if (a_subMod->HasSynchronizedAnimations()) {
-				std::string pairedConditionsTreeNodeLabel = "Paired Conditions##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "pairedConditionsNode";
+				std::string pairedConditionsTreeNodeLabel = "配对条件##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "pairedConditionsNode";
 				if (ImGui::CollapsingHeader(pairedConditionsTreeNodeLabel.data(), ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
@@ -1798,16 +1798,16 @@ namespace UI
 				std::string helpMarkerText;
 				switch (a_functionSetType) {
 				case Functions::FunctionSetType::kOnActivate:
-					functionsTreeNodeLabel = "On Activate##";
-					helpMarkerText = "Functions from this set will run when an animation from this submod starts.";
+					functionsTreeNodeLabel = "激活时##";
+					helpMarkerText = "此集合中的函数将在此子Mod的动画开始时运行。";
 					break;
 				case Functions::FunctionSetType::kOnDeactivate:
-					functionsTreeNodeLabel = "On Deactivate##";
-					helpMarkerText = "Functions from this set will run when an animation from this submod ends.";
+					functionsTreeNodeLabel = "停用时##";
+					helpMarkerText = "此集合中的函数将在此子Mod的动画结束时运行。";
 					break;
 				case Functions::FunctionSetType::kOnTrigger:
-					functionsTreeNodeLabel = "On Trigger##";
-					helpMarkerText = "Functions from this set will run when a specified animation event is called while an animation from this submod is playing.";
+					functionsTreeNodeLabel = "触发时##";
+					helpMarkerText = "当此子Mod的动画正在播放时，指定的动画事件被调用，此集合中的函数将运行。";
 					break;
 				}
 
@@ -1834,7 +1834,7 @@ namespace UI
 			};
 
 			if (_editMode != EditMode::kNone || a_subMod->HasAnyFunctionSet()) {
-				std::string allFunctionsTreeNodeLabel = "Functions##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "functionsNode";
+				std::string allFunctionsTreeNodeLabel = "函数##" + std::to_string(reinterpret_cast<std::uintptr_t>(a_replacerMod)) + std::to_string(reinterpret_cast<std::uintptr_t>(a_subMod)) + "functionsNode";
 				if (ImGui::CollapsingHeader(allFunctionsTreeNodeLabel.data(), ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::Indent();
 					if (_editMode != EditMode::kNone || a_subMod->HasFunctionSet(Functions::FunctionSetType::kOnActivate)) {
@@ -1854,7 +1854,7 @@ namespace UI
 				if (_editMode == EditMode::kAuthor && a_replacerMod->IsLegacy()) {
 					// Save migration config
 					ImGui::BeginDisabled(a_subMod->HasInvalidConditions() || a_subMod->HasInvalidFunctions());
-					UICommon::ButtonWithConfirmationModal("Save author submod config for migration", "This author config won't be read because this is a legacy mod.\nThe functionality is here for convenience only.\nYou can copy the resulting file to the proper folder when migrating your mods to the new structure.\n\n"sv, [&]() {
+					UICommon::ButtonWithConfirmationModal("保存作者子Mod配置用于迁移", "此作者配置不会被读取，因为这是一个传统Mod。\n此功能仅为方便而提供。\n将Mod迁移到新结构时，您可以将生成的文件复制到正确的文件夹。\n\n"sv, [&]() {
 						a_subMod->SaveConfig(_editMode, false);
 					});
 					ImGui::EndDisabled();
@@ -1865,7 +1865,7 @@ namespace UI
 						ImGui::BeginDisabled();
 					}
 					ImGui::BeginDisabled(a_subMod->HasInvalidConditions() || a_subMod->HasInvalidFunctions());
-					if (ImGui::Button(_editMode == EditMode::kAuthor ? "Save submod config (Author)" : "Save submod config (User)")) {
+					if (ImGui::Button(_editMode == EditMode::kAuthor ? "保存子Mod配置 (作者)" : "保存子Mod配置 (用户)")) {
 						a_subMod->SaveConfig(_editMode);
 					}
 					ImGui::EndDisabled();
@@ -1876,7 +1876,7 @@ namespace UI
 
 				// Reload submod config
 				ImGui::SameLine();
-				UICommon::ButtonWithConfirmationModal("Reload submod config", "Are you sure you want to reload the config?\nThis operation cannot be undone!\n\n"sv, [&]() {
+				UICommon::ButtonWithConfirmationModal("重载子Mod配置", "确定要重载配置吗？\n此操作无法撤销！\n\n"sv, [&]() {
 					OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ReloadSubModConfigJob>(a_subMod);
 				});
 
@@ -1886,7 +1886,7 @@ namespace UI
 					ImGui::BeginDisabled();
 				}
 				ImGui::SameLine();
-				UICommon::ButtonWithConfirmationModal("Delete submod user config", "Are you sure you want to delete the user config?\nThis operation cannot be undone!\n\n"sv, [&]() {
+				UICommon::ButtonWithConfirmationModal("删除子Mod用户配置", "确定要删除用户配置吗？\n此操作无法撤销！\n\n"sv, [&]() {
 					Utils::DeleteUserConfig(a_subMod->GetPath());
 					OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ReloadSubModConfigJob>(a_subMod);
 				});
@@ -1898,7 +1898,7 @@ namespace UI
 				if (a_replacerMod->IsLegacy() && _editMode == EditMode::kAuthor) {
 					ImGui::SameLine();
 					ImGui::BeginDisabled(a_subMod->HasInvalidConditions() || a_subMod->HasInvalidFunctions());
-					if (ImGui::Button("Copy submod config to clipboard")) {
+					if (ImGui::Button("复制子Mod配置到剪贴板")) {
 						ImGui::LogToClipboard();
 						ImGui::LogText(a_subMod->SerializeToString().data());
 						ImGui::LogFinish();
@@ -1917,9 +1917,9 @@ namespace UI
 	{
 		static char animPathFilterBuf[32] = "";
 		ImGui::SetNextItemWidth(ImGui::GetFontSize() * 18);
-		ImGui::InputTextWithHint("Filter", "Animation name...", animPathFilterBuf, IM_ARRAYSIZE(animPathFilterBuf));
+		ImGui::InputTextWithHint("筛选", "动画名称...", animPathFilterBuf, IM_ARRAYSIZE(animPathFilterBuf));
 		ImGui::SameLine();
-		UICommon::HelpMarker("Type a part of an animation path to filter the list of replacement animations.");
+		UICommon::HelpMarker("输入动画路径的一部分来筛选替换动画列表。");
 
 		ImGui::Separator();
 
@@ -2131,7 +2131,7 @@ namespace UI
 			const bool bIsConditionPreset = a_conditionType == Conditions::ConditionType::kPreset;
 
 			// Add condition button
-			if (ImGui::Button("Add new condition")) {
+			if (ImGui::Button("添加新条件")) {
 				if (bIsConditionPreset && _lastAddNewConditionName == "PRESET") {
 					_lastAddNewConditionName.clear();
 				}
@@ -2148,17 +2148,17 @@ namespace UI
 
 			// Condition set functions button
 			ImGui::SameLine(0.f, 20.f);
-			const auto popupId = std::string("Condition set functions##") + std::to_string(reinterpret_cast<uintptr_t>(a_conditionSet));
-			if (UICommon::PopupToggleButton("Condition set...", popupId.data())) {
+			const auto popupId = std::string("条件集函数##") + std::to_string(reinterpret_cast<uintptr_t>(a_conditionSet));
+			if (UICommon::PopupToggleButton("条件集...", popupId.data())) {
 				ImGui::OpenPopup(popupId.data());
 			}
 
 			if (ImGui::BeginPopupContextItem(popupId.data())) {
-				const auto xButtonSize = ImGui::CalcTextSize("Paste condition set").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
+				const auto xButtonSize = ImGui::CalcTextSize("粘贴条件集").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
 
 				// Copy conditions button
 				ImGui::BeginDisabled(a_conditionSet->IsEmpty() || !a_conditionSet->IsValid());
-				if (ImGui::Button("Copy condition set", ImVec2(xButtonSize, 0))) {
+				if (ImGui::Button("复制条件集", ImVec2(xButtonSize, 0))) {
 					ImGui::CloseCurrentPopup();
 					_conditionSetCopy = DuplicateConditionSet(a_conditionSet);
 				}
@@ -2167,7 +2167,7 @@ namespace UI
 				// Paste conditions button
 				const bool bPasteEnabled = _conditionSetCopy && !(bIsConditionPreset && ConditionSetContainsPreset(_conditionSetCopy.get()));
 				ImGui::BeginDisabled(!bPasteEnabled);
-				if (ImGui::Button("Paste condition set", ImVec2(xButtonSize, 0))) {
+				if (ImGui::Button("粘贴条件集", ImVec2(xButtonSize, 0))) {
 					ImGui::CloseCurrentPopup();
 					const auto duplicatedSet = DuplicateConditionSet(_conditionSetCopy.get());
 					a_conditionSet->Append(duplicatedSet.get());
@@ -2185,7 +2185,7 @@ namespace UI
 				// Clear conditions button
 				ImGui::BeginDisabled(a_conditionSet->IsEmpty());
 				UICommon::ButtonWithConfirmationModal(
-					"Clear condition set"sv, "Are you sure you want to clear the condition set?\nThis operation cannot be undone!\n\n"sv, [&]() {
+					"清空条件集"sv, "确定要清空条件集吗？\n此操作无法撤销！\n\n"sv, [&]() {
 						ImGui::ClosePopupsExceptModals();
 						OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ClearConditionSetJob>(a_conditionSet);
 						bSetDirty = true;
@@ -2235,7 +2235,7 @@ namespace UI
 
 		if (a_editMode > EditMode::kNone) {
 			// Add function button
-			if (ImGui::Button("Add new function")) {
+			if (ImGui::Button("添加新函数")) {
 				if (!a_functionSet) {
 					a_functionSet = a_parentSubMod->CreateOrGetFunctionSet(a_functionSetType);
 				}
@@ -2252,17 +2252,17 @@ namespace UI
 
 			// Function set functions button
 			ImGui::SameLine(0.f, 20.f);
-			const auto popupId = std::string("Function set functions##") + std::to_string(reinterpret_cast<uintptr_t>(a_parentSubMod)) + std::to_string(static_cast<uint8_t>(a_functionSetType)) + std::to_string(reinterpret_cast<uintptr_t>(a_functionSet));
-			if (UICommon::PopupToggleButton("Function set...", popupId.data())) {
+			const auto popupId = std::string("函数集函数##") + std::to_string(reinterpret_cast<uintptr_t>(a_parentSubMod)) + std::to_string(static_cast<uint8_t>(a_functionSetType)) + std::to_string(reinterpret_cast<uintptr_t>(a_functionSet));
+			if (UICommon::PopupToggleButton("函数集...", popupId.data())) {
 				ImGui::OpenPopup(popupId.data());
 			}
 
 			if (ImGui::BeginPopupContextItem(popupId.data())) {
-				const auto xButtonSize = ImGui::CalcTextSize("Paste function set").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
+				const auto xButtonSize = ImGui::CalcTextSize("粘贴函数集").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
 
 				// Copy functions button
 				ImGui::BeginDisabled(!a_functionSet || a_functionSet->IsEmpty() || !a_functionSet->IsValid());
-				if (ImGui::Button("Copy function set", ImVec2(xButtonSize, 0))) {
+				if (ImGui::Button("复制函数集", ImVec2(xButtonSize, 0))) {
 					ImGui::CloseCurrentPopup();
 					_functionSetCopy = DuplicateFunctionSet(a_functionSet);
 				}
@@ -2271,7 +2271,7 @@ namespace UI
 				// Paste functions button
 				const bool bPasteEnabled = _functionSetCopy != nullptr;
 				ImGui::BeginDisabled(!bPasteEnabled);
-				if (ImGui::Button("Paste function set", ImVec2(xButtonSize, 0))) {
+				if (ImGui::Button("粘贴函数集", ImVec2(xButtonSize, 0))) {
 					ImGui::CloseCurrentPopup();
 					const auto duplicatedSet = DuplicateFunctionSet(_functionSetCopy.get());
 					if (!a_functionSet) {
@@ -2292,7 +2292,7 @@ namespace UI
 				// Clear functions button
 				ImGui::BeginDisabled(!a_functionSet || a_functionSet->IsEmpty());
 				UICommon::ButtonWithConfirmationModal(
-					"Clear function set"sv, "Are you sure you want to clear the function set?\nThis operation cannot be undone!\n\n"sv, [&]() {
+					"清空函数集"sv, "确定要清空函数集吗？\n此操作无法撤销！\n\n"sv, [&]() {
 						ImGui::ClosePopupsExceptModals();
 						OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ClearFunctionSetJob>(a_functionSet);
 						bSetDirty = true;
@@ -2348,7 +2348,7 @@ namespace UI
 			const auto conditionName = a_condition->GetName();
 			std::string nodeName = conditionName.data();
 			if (a_condition->IsNegated()) {
-				nodeName.insert(0, "NOT ");
+				nodeName.insert(0, "非 ");
 			}
 
 			bool bStyleVarPushed = false;
@@ -2375,9 +2375,9 @@ namespace UI
 				if (ImGui::BeginPopupContextItem()) {
 					// copy button
 					auto& style = ImGui::GetStyle();
-					auto xButtonSize = ImGui::CalcTextSize("Paste condition below").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
+					auto xButtonSize = ImGui::CalcTextSize("粘贴条件到下方").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
 					ImGui::BeginDisabled(!a_condition->IsValid());
-					if (ImGui::Button("Copy condition", ImVec2(xButtonSize, 0))) {
+					if (ImGui::Button("复制条件", ImVec2(xButtonSize, 0))) {
 						_conditionCopy = DuplicateCondition(a_condition);
 						ImGui::CloseCurrentPopup();
 					}
@@ -2386,7 +2386,7 @@ namespace UI
 					// paste button
 					const bool bPasteEnabled = _conditionCopy && !(a_conditionType == Conditions::ConditionType::kPreset && ConditionContainsPreset(_conditionCopy.get()));
 					ImGui::BeginDisabled(!bPasteEnabled);
-					if (ImGui::Button("Paste condition below", ImVec2(xButtonSize, 0))) {
+					if (ImGui::Button("粘贴条件到下方", ImVec2(xButtonSize, 0))) {
 						auto duplicate = DuplicateCondition(_conditionCopy);
 						OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::InsertConditionJob>(duplicate, a_conditionSet, a_condition);
 						a_bOutSetDirty = true;
@@ -2404,7 +2404,7 @@ namespace UI
 
 					// delete button
 					UICommon::ButtonWithConfirmationModal(
-						"Delete condition"sv, "Are you sure you want to remove the condition?\nThis operation cannot be undone!\n\n"sv, [&]() {
+						"删除条件"sv, "确定要移除此条件吗？\n此操作无法撤销！\n\n"sv, [&]() {
 							ImGui::ClosePopupsExceptModals();
 							OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::RemoveConditionJob>(a_condition, a_conditionSet);
 							a_bOutSetDirty = true;
@@ -2483,7 +2483,7 @@ namespace UI
 					a_conditionSet->SetDirty(true);
 					a_bOutSetDirty = true;
 				}
-				UICommon::AddTooltip("Toggles the condition on/off");
+				UICommon::AddTooltip("开关条件");
 				ImGui::PopID();
 			}
 
@@ -2525,12 +2525,12 @@ namespace UI
 				if (a_editMode > EditMode::kNone) {
 					// negate checkbox
 					bool bNOT = a_condition->IsNegated();
-					if (ImGui::Checkbox("Negate", &bNOT)) {
+					if (ImGui::Checkbox("取反", &bNOT)) {
 						a_condition->SetNegated(bNOT);
 						a_conditionSet->SetDirty(true);
 						a_bOutSetDirty = true;
 					}
-					UICommon::AddTooltip("Negates the condition");
+					UICommon::AddTooltip("对条件取反");
 
 					// select condition type
 					ImGui::SameLine();
@@ -2554,7 +2554,7 @@ namespace UI
 						currentConditionInfo = &*it;
 					}
 
-					if (_conditionComboFilter.ComboFilter("##Condition type", selectedItem, conditionInfos, currentConditionInfo, ImGuiComboFlags_HeightLarge, &UIMain::DrawInfoTooltip)) {
+					if (_conditionComboFilter.ComboFilter("##条件类型", selectedItem, conditionInfos, currentConditionInfo, ImGuiComboFlags_HeightLarge, &UIMain::DrawInfoTooltip)) {
 						if (selectedItem >= 0 && selectedItem < conditionInfos.size() && OpenAnimationReplacer::GetSingleton().HasConditionFactory(conditionInfos[selectedItem].name)) {
 							_lastAddNewConditionName = conditionInfos[selectedItem].name;
 							OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ReplaceConditionJob>(a_condition, conditionInfos[selectedItem].name, a_conditionSet);
@@ -2565,7 +2565,7 @@ namespace UI
 					// remove condition button
 					UICommon::SecondColumn(_firstColumnWidthPercent);
 
-					UICommon::ButtonWithConfirmationModal("Delete condition"sv, "Are you sure you want to remove the condition?\nThis operation cannot be undone!\n\n"sv, [&]() {
+					UICommon::ButtonWithConfirmationModal("删除条件"sv, "确定要移除此条件吗？\n此操作无法撤销！\n\n"sv, [&]() {
 						OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::RemoveConditionJob>(a_condition, a_conditionSet);
 						a_bOutSetDirty = true;
 					});
@@ -2574,9 +2574,9 @@ namespace UI
 					{
 						if (a_condition->GetConditionType() == Conditions::ConditionType::kCustom && a_condition->GetConditionAPIVersion() >= Conditions::ConditionAPIVersion::kNew) {
 							static std::map<Conditions::EssentialState, std::string_view> enumMap = {
-								{ Conditions::EssentialState::kEssential, "Essential" },
-								{ Conditions::EssentialState::kNonEssential_True, "Non-essential - Return true" },
-								{ Conditions::EssentialState::kNonEssential_False, "Non-essential - Return false" }
+								{ Conditions::EssentialState::kEssential, "必要" },
+								{ Conditions::EssentialState::kNonEssential_True, "非必要 - 返回真" },
+								{ Conditions::EssentialState::kNonEssential_False, "非必要 - 返回假" }
 							};
 							ImGui::SameLine();
 							std::string idString = std::format("{}##essential", reinterpret_cast<uintptr_t>(a_condition.get()));
@@ -2587,7 +2587,7 @@ namespace UI
 							if (const auto search = enumMap.find(currentValue); search != enumMap.end()) {
 								currentEnumName = search->second;
 							} else {
-								currentEnumName = std::format("Unknown ({})", static_cast<uint8_t>(currentValue));
+								currentEnumName = std::format("未知 ({})", static_cast<uint8_t>(currentValue));
 							}
 
 							if (ImGui::BeginCombo(idString.data(), currentEnumName.data())) {
@@ -2608,7 +2608,7 @@ namespace UI
 								ImGui::EndCombo();
 							}
 							ImGui::PopID();
-							UICommon::AddTooltip("Users missing a plugin implementing this condition won't be notified about an error and the condition will evaluate to either true or false, depending on the selected option.");
+							UICommon::AddTooltip("缺少实现此条件的插件的用户不会收到错误通知，条件将根据所选选项返回真或假。");
 						}
 					}
 				}
@@ -2661,7 +2661,7 @@ namespace UI
 				const auto current = a_condition->GetCurrent(a_refrToEvaluate);
 				if (!current.empty()) {
 					ImGui::Separator();
-					UICommon::TextUnformattedDisabled("Current:");
+					UICommon::TextUnformattedDisabled("当前值:");
 					ImGui::SameLine();
 					ImGui::TextUnformatted(current.data());
 				}
@@ -2756,9 +2756,9 @@ namespace UI
 				if (ImGui::BeginPopupContextItem()) {
 					// copy button
 					auto& style = ImGui::GetStyle();
-					auto xButtonSize = ImGui::CalcTextSize("Paste function below").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
+					auto xButtonSize = ImGui::CalcTextSize("粘贴函数到下方").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
 					ImGui::BeginDisabled(!a_function->IsValid());
-					if (ImGui::Button("Copy function", ImVec2(xButtonSize, 0))) {
+					if (ImGui::Button("复制函数", ImVec2(xButtonSize, 0))) {
 						_functionCopy = DuplicateFunction(a_function);
 						ImGui::CloseCurrentPopup();
 					}
@@ -2767,7 +2767,7 @@ namespace UI
 					// paste button
 					const bool bPasteEnabled = _functionCopy != nullptr;
 					ImGui::BeginDisabled(!bPasteEnabled);
-					if (ImGui::Button("Paste function below", ImVec2(xButtonSize, 0))) {
+					if (ImGui::Button("粘贴函数到下方", ImVec2(xButtonSize, 0))) {
 						auto duplicate = DuplicateFunction(_functionCopy);
 						if (!a_functionSet) {
 							a_functionSet = a_parentSubMod->CreateOrGetFunctionSet(a_functionSetType);
@@ -2789,7 +2789,7 @@ namespace UI
 
 					// delete button
 					UICommon::ButtonWithConfirmationModal(
-						"Delete function"sv, "Are you sure you want to remove the function?\nThis operation cannot be undone!\n\n"sv, [&]() {
+						"删除函数"sv, "确定要移除此函数吗？\n此操作无法撤销！\n\n"sv, [&]() {
 							ImGui::ClosePopupsExceptModals();
 							OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::RemoveFunctionJob>(a_function, a_functionSet);
 							a_bOutSetDirty = true;
@@ -2868,7 +2868,7 @@ namespace UI
 					a_functionSet->SetDirty(true);
 					a_bOutSetDirty = true;
 				}
-				UICommon::AddTooltip("Toggles the function on/off");
+				UICommon::AddTooltip("开关函数");
 				ImGui::PopID();
 			}
 
@@ -2923,7 +2923,7 @@ namespace UI
 						currentFunctionInfo = &*it;
 					}
 
-					if (_functionComboFilter.ComboFilter("##Function type", selectedItem, functionInfos, currentFunctionInfo, ImGuiComboFlags_HeightLarge, &UIMain::DrawInfoTooltip)) {
+					if (_functionComboFilter.ComboFilter("##函数类型", selectedItem, functionInfos, currentFunctionInfo, ImGuiComboFlags_HeightLarge, &UIMain::DrawInfoTooltip)) {
 						if (selectedItem >= 0 && selectedItem < functionInfos.size() && OpenAnimationReplacer::GetSingleton().HasFunctionFactory(functionInfos[selectedItem].name)) {
 							_lastAddNewFunctionName = functionInfos[selectedItem].name;
 							OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::ReplaceFunctionJob>(a_function, functionInfos[selectedItem].name, a_functionSet);
@@ -2934,7 +2934,7 @@ namespace UI
 					// remove function button
 					UICommon::SecondColumn(_firstColumnWidthPercent);
 
-					UICommon::ButtonWithConfirmationModal("Delete function"sv, "Are you sure you want to remove the function?\nThis operation cannot be undone!\n\n"sv, [&]() {
+					UICommon::ButtonWithConfirmationModal("删除函数"sv, "确定要移除此函数吗？\n此操作无法撤销！\n\n"sv, [&]() {
 						OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::RemoveFunctionJob>(a_function, a_functionSet);
 						a_bOutSetDirty = true;
 					});
@@ -2943,9 +2943,9 @@ namespace UI
 					{
 						if (a_function->GetFunctionType() == Functions::FunctionType::kCustom) {
 							static std::map<Functions::EssentialState, std::string_view> enumMap = {
-								{ Functions::EssentialState::kEssential, "Essential" },
-								{ Functions::EssentialState::kNonEssential_True, "Non-essential - Return true" },
-								{ Functions::EssentialState::kNonEssential_False, "Non-essential - Return false" }
+								{ Functions::EssentialState::kEssential, "必要" },
+								{ Functions::EssentialState::kNonEssential_True, "非必要 - 返回真" },
+								{ Functions::EssentialState::kNonEssential_False, "非必要 - 返回假" }
 							};
 							ImGui::SameLine();
 							std::string idString = std::format("{}##essential", reinterpret_cast<uintptr_t>(a_function.get()));
@@ -2956,7 +2956,7 @@ namespace UI
 							if (const auto search = enumMap.find(currentValue); search != enumMap.end()) {
 								currentEnumName = search->second;
 							} else {
-								currentEnumName = std::format("Unknown ({})", static_cast<uint8_t>(currentValue));
+								currentEnumName = std::format("未知 ({})", static_cast<uint8_t>(currentValue));
 							}
 
 							if (ImGui::BeginCombo(idString.data(), currentEnumName.data())) {
@@ -2977,7 +2977,7 @@ namespace UI
 								ImGui::EndCombo();
 							}
 							ImGui::PopID();
-							UICommon::AddTooltip("Users missing a plugin implementing this function won't be notified about an error and the function's return value will either be true or false, depending on the selected option.");
+							UICommon::AddTooltip("缺少实现此函数的插件的用户不会收到错误通知，函数返回值将根据所选选项返回真或假。");
 						}
 					}
 				}
@@ -3038,10 +3038,10 @@ namespace UI
 
 				// triggers
 				if (a_functionSetType == Functions::FunctionSetType::kOnTrigger) {
-					std::string triggersLabel = std::format("Triggers##{}", reinterpret_cast<uintptr_t>(a_function.get()));
+					std::string triggersLabel = std::format("触发器##{}", reinterpret_cast<uintptr_t>(a_function.get()));
 					bool bIsOpen = ImGui::CollapsingHeader(triggersLabel.data(), ImGuiTreeNodeFlags_DefaultOpen);
 					ImGui::SameLine();
-					UICommon::HelpMarker("Animation events with an optional payload that will trigger this function.");
+					UICommon::HelpMarker("带有可选载荷的动画事件，将触发此函数。");
 					if (bIsOpen) {
 						ImGui::Indent();
 						uint32_t i = 0;
@@ -3059,7 +3059,7 @@ namespace UI
 
 							// remove trigger button
 							UICommon::SecondColumn(_firstColumnWidthPercent);
-							std::string buttonLabel = std::format("Delete trigger##{}{}", reinterpret_cast<uintptr_t>(a_function.get()), i++);
+							std::string buttonLabel = std::format("删除触发器##{}{}", reinterpret_cast<uintptr_t>(a_function.get()), i++);
 							if (ImGui::Button(buttonLabel.data())) {
 								OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::RemoveTriggerJob>(a_function, a_functionSet, a_trigger);
 								a_functionSet->SetDirty(true);
@@ -3070,8 +3070,8 @@ namespace UI
 
 						// add new trigger
 						if (a_editMode > EditMode::kNone) {
-							constexpr auto popupName = "Adding new trigger"sv;
-							std::string buttonLabel = std::format("Add new trigger##{}", reinterpret_cast<uintptr_t>(a_function.get()));
+							constexpr auto popupName = "添加新触发器"sv;
+							std::string buttonLabel = std::format("添加新触发器##{}", reinterpret_cast<uintptr_t>(a_function.get()));
 							if (ImGui::Button(buttonLabel.data())) {
 								const auto popupPos = ImGui::GetCursorScreenPos();
 								ImGui::SetNextWindowPos(popupPos);
@@ -3081,12 +3081,12 @@ namespace UI
 							if (ImGui::BeginPopupModal(popupName.data(), nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 								static std::string eventBuffer;
 								static std::string payloadBuffer;
-								ImGui::InputTextWithHint("##NewTriggerEvent", "Event name", &eventBuffer, ImGuiInputTextFlags_CharsNoBlank);
+								ImGui::InputTextWithHint("##NewTriggerEvent", "事件名称", &eventBuffer, ImGuiInputTextFlags_CharsNoBlank);
 								ImGui::SameLine();
 								ImGui::TextUnformatted(".");
 								ImGui::SameLine();
-								ImGui::InputTextWithHint("##NewTriggerPayload", "Payload (optional)", &payloadBuffer, ImGuiInputTextFlags_CharsNoBlank);
-								std::string addButtonLabel = std::format("Add trigger##{}", reinterpret_cast<uintptr_t>(a_function.get()));
+								ImGui::InputTextWithHint("##NewTriggerPayload", "载荷（可选）", &payloadBuffer, ImGuiInputTextFlags_CharsNoBlank);
+								std::string addButtonLabel = std::format("添加触发器##{}", reinterpret_cast<uintptr_t>(a_function.get()));
 								ImGui::BeginDisabled(eventBuffer.empty());
 								if (ImGui::Button(addButtonLabel.data())) {
 									auto trigger = Functions::Trigger(eventBuffer.data(), payloadBuffer.data());
@@ -3100,7 +3100,7 @@ namespace UI
 								ImGui::EndDisabled();
 								ImGui::SetItemDefaultFocus();
 								ImGui::SameLine();
-								if (ImGui::Button("Cancel")) {
+								if (ImGui::Button("取消")) {
 									eventBuffer.clear();
 									payloadBuffer.clear();
 									ImGui::CloseCurrentPopup();
@@ -3174,7 +3174,7 @@ namespace UI
 
 			const float tooltipWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().WindowPadding.x * 2;
 
-			const std::string nodeId = std::format("No conditions##{}", reinterpret_cast<uintptr_t>(a_conditionSet));
+			const std::string nodeId = std::format("无条件##{}", reinterpret_cast<uintptr_t>(a_conditionSet));
 			UICommon::TreeNodeCollapsedLeaf(nodeId.data(), ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth);
 
 			if (a_editMode > EditMode::kNone) {
@@ -3183,7 +3183,7 @@ namespace UI
 					// paste button
 					const bool bPasteEnabled = _conditionCopy && !(a_conditionType == Conditions::ConditionType::kPreset && ConditionContainsPreset(_conditionCopy.get()));
 					ImGui::BeginDisabled(!bPasteEnabled);
-					if (ImGui::Button("Paste condition below")) {
+					if (ImGui::Button("粘贴条件到下方")) {
 						auto duplicate = DuplicateCondition(_conditionCopy);
 						OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::InsertConditionJob>(duplicate, a_conditionSet, nullptr);
 						ImGui::CloseCurrentPopup();
@@ -3233,7 +3233,7 @@ namespace UI
 
 			const float tooltipWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().WindowPadding.x * 2;
 
-			const std::string nodeId = std::format("No functions##{}", id);
+			const std::string nodeId = std::format("无函数##{}", id);
 			UICommon::TreeNodeCollapsedLeaf(nodeId.data(), ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth);
 
 			if (a_editMode > EditMode::kNone) {
@@ -3242,7 +3242,7 @@ namespace UI
 					// paste button
 					const bool bPasteEnabled = _functionCopy != nullptr;
 					ImGui::BeginDisabled(!bPasteEnabled);
-					if (ImGui::Button("Paste function below")) {
+					if (ImGui::Button("粘贴函数到下方")) {
 						auto duplicate = DuplicateFunction(_functionCopy);
 						if (!a_functionSet) {
 							a_functionSet = a_parentSubMod->CreateOrGetFunctionSet(a_functionSetType);
@@ -3314,11 +3314,11 @@ namespace UI
 			if (_editMode != EditMode::kNone) {
 				if (ImGui::BeginPopupContextItem()) {
 					// delete button
-					const std::string buttonText = "Delete condition preset";
+					const std::string buttonText = "删除条件预设";
 					const auto& style = ImGui::GetStyle();
 					const auto xButtonSize = ImGui::CalcTextSize(buttonText.data()).x + style.FramePadding.x * 2 + style.ItemSpacing.x;
 					UICommon::ButtonWithConfirmationModal(
-						buttonText, "Are you sure you want to remove this condition preset?\nThis operation cannot be undone!\n\n"sv, [&]() {
+						buttonText, "确定要删除此条件预设吗？\n此操作无法撤销！\n\n"sv, [&]() {
 							ImGui::ClosePopupsExceptModals();
 							OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::RemoveConditionPresetJob>(a_replacerMod, a_conditionPreset->GetName());
 							setDirtyOnContainingSubMods(a_conditionPreset);
@@ -3361,7 +3361,7 @@ namespace UI
 
 					UICommon::SecondColumn(_firstColumnWidthPercent);
 
-					UICommon::ButtonWithConfirmationModal("Delete condition preset"sv, "Are you sure you want to remove this condition preset?\nThis operation cannot be undone!\n\n"sv, [&]() {
+					UICommon::ButtonWithConfirmationModal("删除条件预设"sv, "确定要删除此条件预设吗？\n此操作无法撤销！\n\n"sv, [&]() {
 						OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::RemoveConditionPresetJob>(a_replacerMod, a_conditionPreset->GetName());
 						setDirtyOnContainingSubMods(a_conditionPreset);
 						bSetDirty = true;
@@ -3380,7 +3380,7 @@ namespace UI
 						a_replacerMod->SetDirty(true);
 					}
 					UICommon::SecondColumn(_firstColumnWidthPercent);
-					UICommon::TextUnformattedDisabled("Condition preset description");
+					UICommon::TextUnformattedDisabled("条件预设描述");
 					ImGui::Spacing();
 				} else if (!a_conditionPreset->GetDescription().empty()) {
 					UICommon::TextUnformattedWrapped(a_conditionPreset->GetDescription().data());
@@ -3414,14 +3414,14 @@ namespace UI
 				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 50.0f);
 				ImGui::TextUnformatted(a_info.description.data());
 				if (!a_info.requiredPluginName.empty()) {
-					ImGui::TextUnformatted("Source plugin:");
+					ImGui::TextUnformatted("来源插件：");
 					ImGui::SameLine();
 					UICommon::TextUnformattedColored(a_info.textColor, a_info.requiredPluginName.data());
 					ImGui::SameLine();
 					UICommon::TextUnformattedDisabled(a_info.requiredVersion.string("."sv).data());
 					if (!a_info.requiredPluginAuthor.empty()) {
 						ImGui::SameLine();
-						ImGui::TextUnformatted("by");
+						ImGui::TextUnformatted("作者");
 						ImGui::SameLine();
 						UICommon::TextUnformattedColored(a_info.textColor, a_info.requiredPluginAuthor.data());
 					}
@@ -3436,9 +3436,9 @@ namespace UI
 	void UIMain::UnloadedAnimationsWarning()
 	{
 		ImGui::AlignTextToFramePadding();
-		ImGui::TextUnformatted("Animations from behavior projects that are not loaded will not show up here!");
+		ImGui::TextUnformatted("未加载的行为项目中的动画不会显示在这里！");
 		ImGui::SameLine();
-		UICommon::HelpMarker("If the ones you're looking for are missing, make sure a character using them has been loaded by the game in this gameplay session.");
+		UICommon::HelpMarker("如果您要找的动画缺失，请确保使用这些动画的角色在此游戏会话中已被游戏加载。");
 	}
 
 	bool UIMain::CanPreviewAnimation(RE::TESObjectREFR* a_refr, const ReplacementAnimation* a_replacementAnimation)
@@ -3492,14 +3492,14 @@ namespace UI
 		const auto& style = ImGui::GetStyle();
 
 		if (a_bIsPreviewing) {
-			return ImGui::CalcTextSize("Stop").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
+			return ImGui::CalcTextSize("停止").x + style.FramePadding.x * 2 + style.ItemSpacing.x;
 		}
 
 		if (a_replacementAnimation->IsSynchronizedAnimation()) {
-			return (ImGui::CalcTextSize("Preview source").x + style.FramePadding.x * 2 + style.ItemSpacing.x) + (ImGui::CalcTextSize("Preview target").x + style.FramePadding.x * 2 + style.ItemSpacing.x);
+			return (ImGui::CalcTextSize("预览源").x + style.FramePadding.x * 2 + style.ItemSpacing.x) + (ImGui::CalcTextSize("预览目标").x + style.FramePadding.x * 2 + style.ItemSpacing.x);
 		}
 
-		return (ImGui::CalcTextSize("Preview").x + style.FramePadding.x * 2 + style.ItemSpacing.x);
+		return (ImGui::CalcTextSize("预览").x + style.FramePadding.x * 2 + style.ItemSpacing.x);
 	}
 
 	void UIMain::DrawPreviewButtons(RE::TESObjectREFR* a_refr, const ReplacementAnimation* a_replacementAnimation, float a_previewButtonWidth, bool a_bCanPreview, bool a_bIsPreviewing, Variant* a_variant)
@@ -3510,24 +3510,24 @@ namespace UI
 
 		if (a_bIsPreviewing) {
 			ImGui::SameLine(ImGui::GetContentRegionMax().x - a_previewButtonWidth + offset);
-			const std::string label = std::format("Stop##{}", reinterpret_cast<uintptr_t>(obj));
+			const std::string label = std::format("停止##{}", reinterpret_cast<uintptr_t>(obj));
 			if (ImGui::Button(label.data())) {
 				OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::StopPreviewAnimationJob>(a_refr);
 			}
 		} else if (a_bCanPreview) {
 			ImGui::SameLine(ImGui::GetContentRegionMax().x - a_previewButtonWidth + offset);
 			if (a_replacementAnimation->IsSynchronizedAnimation()) {
-				const std::string sourceLabel = std::format("Preview source##{}", reinterpret_cast<uintptr_t>(obj));
+				const std::string sourceLabel = std::format("预览源##{}", reinterpret_cast<uintptr_t>(obj));
 				if (ImGui::Button(sourceLabel.data())) {
 					OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::BeginPreviewAnimationJob>(a_refr, a_replacementAnimation, Settings::synchronizedClipSourcePrefix, a_variant);
 				}
 				ImGui::SameLine();
-				const std::string targetLabel = std::format("Preview target##{}", reinterpret_cast<uintptr_t>(obj));
+				const std::string targetLabel = std::format("预览目标##{}", reinterpret_cast<uintptr_t>(obj));
 				if (ImGui::Button(targetLabel.data())) {
 					OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::BeginPreviewAnimationJob>(a_refr, a_replacementAnimation, Settings::synchronizedClipTargetPrefix, a_variant);
 				}
 			} else {
-				const std::string label = std::format("Preview##{}", reinterpret_cast<uintptr_t>(obj));
+				const std::string label = std::format("预览##{}", reinterpret_cast<uintptr_t>(obj));
 				if (ImGui::Button(label.data())) {
 					OpenAnimationReplacer::GetSingleton().QueueJob<Jobs::BeginPreviewAnimationJob>(a_refr, a_replacementAnimation, a_variant);
 				}
