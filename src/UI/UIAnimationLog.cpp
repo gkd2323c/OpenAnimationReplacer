@@ -266,7 +266,7 @@ namespace UI
 				ImGui::EndDisabled();
 
 				if (bNodeOpen) {
-bool bHasSynchronizedConditions = !step.synchronizedConditions.empty();
+					bool bHasSynchronizedConditions = !step.synchronizedConditions.empty();
 					if (bHasSynchronizedConditions) {
 						ImGui::TextUnformatted("条件:");
 					}
