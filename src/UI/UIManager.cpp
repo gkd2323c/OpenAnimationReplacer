@@ -53,6 +53,39 @@ namespace UI
 		auto& style = ImGui::GetStyle();
 		style = GetDefaultStyle();
 
+		ImFont* font = io.Fonts->AddFontDefault();
+		constexpr ImWchar chinese_ranges[] = {
+			0x0020, 0x00FF,
+			0x4E00, 0x9FFF,
+			0x3000, 0x303F,
+			0xFF00, 0xFFEF,
+			0
+		};
+		ImFontConfig font_cfg;
+		font_cfg.MergeMode = true;
+		font_cfg.GlyphMinAdvanceX = 13.0f;
+		font = io.Fonts->AddFontFromFileTTF("Data\\Fonts\\seguisym.ttf", 16.0f, &font_cfg, io.Fonts->GetGlyphRangesDefault());
+		if (!font) {
+			font = io.Fonts->AddFontFromFileTTF("Data\\Fonts\\FontConfig.txt", 16.0f, &font_cfg, io.Fonts->GetGlyphRangesDefault());
+		}
+		font = io.Fonts->AddFontFromFileTTF("Data\\Fonts\\Chinese_simplified_normal_16_hd.ttf", 18.0f, &font_cfg, chinese_ranges);
+		if (!font) {
+			font = io.Fonts->AddFontFromFileTTF("Data\\Fonts\\MSYH.TTF", 18.0f, &font_cfg, chinese_ranges);
+		}
+		if (!font) {
+			font = io.Fonts->AddFontFromFileTTF("Data\\Fonts\\msyh.ttc", 18.0f, &font_cfg, chinese_ranges);
+		}
+		if (!font) {
+			font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\msyh.ttc", 18.0f, &font_cfg, chinese_ranges);
+		}
+		if (!font) {
+			font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\simsun.ttc", 18.0f, &font_cfg, chinese_ranges);
+		}
+		if (font) {
+			io.FontDefault = font;
+		}
+		io.Fonts->Build();
+
 		bInitialized = true;
 
 		//bShowMain = true;
